@@ -1,0 +1,11 @@
+{
+  "name": "opencollection",
+  "private": true,
+  "workspaces": [
+    "packages/oc-converters",
+    "packages/oc-schema",
+    "packages/oc-core",
+    "packages/oc-express"
+  ],
+  "homepage": "https://uwww.opencollection.com"
+}

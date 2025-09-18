@@ -497,6 +497,10 @@
       "type": "object",
       "description": "HTTP request configuration",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
         "type": {
           "type": "string",
           "const": "http",
@@ -566,6 +570,25 @@
         "type": {
           "type": "string",
           "const": "folder"
+        },
+        "Item": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/HttpRequest"
+            },
+            {
+              "$ref": "#/$defs/GraphQLRequest"
+            },
+            {
+              "$ref": "#/$defs/GrpcRequest"
+            },
+            {
+              "$ref": "#/$defs/Folder"
+            },
+            {
+              "$ref": "#/$defs/Script"
+            }
+          ]
         },
         "headers": {
           "type": "array",

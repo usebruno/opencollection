@@ -1,0 +1,23 @@
+{
+  "name": "@opencollection/proxy",
+  "version": "1.0.0",
+  "description": "CORS proxy server for OpenCollection requests",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
+  },
+  "keywords": [
+    "opencollection",
+    "cors",
+    "proxy",
+    "http"
+  ],
+  "author": "OpenCollection",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0"
+  }
+} 

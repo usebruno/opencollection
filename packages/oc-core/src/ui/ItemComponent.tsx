@@ -6,7 +6,7 @@ import 'prismjs/components/prism-graphql';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-xml-doc';
 import { OpenCollectionItem, OpenCollectionCollection, HttpRequest, Script, Folder } from '../types';
-import { generateSectionId, getItemId, generateSafeId } from '../utils/itemUtils';
+import { generateSectionId, getItemId, generateSafeId, sortItemsWithFoldersFirst } from '../utils/itemUtils';
 import {
   HeadersTable,
   VarsTable,
@@ -695,7 +695,7 @@ const ItemComponent = memo(({
                 </div>
 
                 <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
-                  {folderItem.items.map((nestedItem, index) => {
+                  {sortItemsWithFoldersFirst(folderItem.items).map((nestedItem, index) => {
                     const nestedItemId = getItemId(nestedItem);
                     const safeId = generateSafeId(nestedItemId);
 
@@ -952,7 +952,7 @@ const ItemComponent = memo(({
     };
 
     return (
-      <div className={`endpoint-content ${theme}`} id={`section-${sectionId}`} ref={sectionRefCallback}>
+      <div className={`endpoint-content py-4 ${theme}`} id={`section-${sectionId}`} ref={sectionRefCallback}>
 
         <div className="endpoint-header">
           <h1 className="endpoint-name">{endpoint.name}</h1>

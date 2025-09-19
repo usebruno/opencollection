@@ -3,7 +3,6 @@ import { OpenCollectionItem, OpenCollectionCollection, CustomPage, HttpRequest }
 import ItemComponent from './ItemComponent';
 import Overview from './Overview';
 import CustomPageRenderer from './CustomPageRenderer';
-import PageNavigation from './PageNavigation';
 import { RequestRunner } from './request-runner';
 
 interface SinglePageRendererProps {
@@ -14,13 +13,6 @@ interface SinglePageRendererProps {
   md: any;
   collection: OpenCollectionCollection | null;
   customPageContents: Record<string, string>;
-  // Navigation props
-  currentPageIndex: number;
-  totalPages: number;
-  canGoNext: boolean;
-  canGoPrevious: boolean;
-  goToNext: () => void;
-  goToPrevious: () => void;
   // Runner mode props
   isRunnerMode?: boolean;
   proxyUrl?: string;
@@ -34,16 +26,10 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
   md,
   collection,
   customPageContents,
-  currentPageIndex,
-  totalPages,
-  canGoNext,
-  canGoPrevious,
-  goToNext,
-  goToPrevious,
   isRunnerMode,
   proxyUrl
 }) => {
-  if (!currentPageItem || !currentPageId) {
+  if (!currentPageId) {
     return (
       <div className="flex items-center justify-center h-64 text-gray-500 dark:text-gray-400">
         <div className="text-center">
@@ -60,31 +46,19 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
   // Render overview
   if (pageType === 'overview' && collection) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex-1 mb-4">
-          <Overview collection={collection} theme={theme} />
-        </div>
-        <PageNavigation
-          currentPageIndex={currentPageIndex}
-          totalPages={totalPages}
-          canGoNext={canGoNext}
-          canGoPrevious={canGoPrevious}
-          goToNext={goToNext}
-          goToPrevious={goToPrevious}
-          currentPageName={currentPageItem?.name || currentPageId || undefined}
-        />
+      <div className="min-h-full">
+        <Overview collection={collection} theme={theme} />
       </div>
     );
   }
 
   // Render custom page
-  if (pageType === 'custom') {
+  if (pageType === 'custom' && currentPageItem) {
     const customPage = currentPageItem as CustomPage;
     const content = customPageContents[customPage.name] || '';
     
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex-1 mb-4">
+      <div className="min-h-full">
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-4 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -101,29 +75,19 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
               registerSectionRef={() => {}} // No-op since we don't need section refs in page mode
             />
           </div>
-        </div>
-        <PageNavigation
-          currentPageIndex={currentPageIndex}
-          totalPages={totalPages}
-          canGoNext={canGoNext}
-          canGoPrevious={canGoPrevious}
-          goToNext={goToNext}
-          goToPrevious={goToPrevious}
-          currentPageName={currentPageItem?.name || currentPageId || undefined}
-        />
       </div>
     );
   }
 
   // Render collection item
-  if (pageType === 'item') {
+  if (pageType === 'item' && currentPageItem) {
     const item = currentPageItem as OpenCollectionItem;
     
     // Render in runner mode if enabled and it's an HTTP request
-            if (isRunnerMode && item.type === 'http' && collection) {
+    if (isRunnerMode && item.type === 'http' && collection) {
       return (
         <div className="h-full">
-                                <RequestRunner
+          <RequestRunner
             item={item as HttpRequest}
             collection={collection}
             proxyUrl={proxyUrl}
@@ -133,8 +97,7 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
     }
     
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex-1 mb-4">
+      <div className="min-h-full">
           <ItemComponent
             key={`${item.type}-${currentPageId}`}
             item={item}
@@ -144,16 +107,6 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
             parentPath=""
             collection={collection || undefined}
           />
-        </div>
-        <PageNavigation
-          currentPageIndex={currentPageIndex}
-          totalPages={totalPages}
-          canGoNext={canGoNext}
-          canGoPrevious={canGoPrevious}
-          goToNext={goToNext}
-          goToPrevious={goToPrevious}
-          currentPageName={currentPageItem?.name || currentPageId || undefined}
-        />
       </div>
     );
   }
@@ -161,4 +114,4 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
   return null;
 };
 
-export default SinglePageRenderer; 
+export default SinglePageRenderer;

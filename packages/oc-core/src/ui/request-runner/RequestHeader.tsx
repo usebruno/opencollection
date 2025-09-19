@@ -16,62 +16,43 @@ const RequestHeader: React.FC<RequestHeaderProps> = ({
 }) => {
   return (
     <div 
-      className="flex items-center justify-between px-4 py-3 border-b"
+      className="flex items-center justify-between py-4 border-b"
       style={{ 
         borderColor: 'var(--border-color)',
-        backgroundColor: 'var(--bg-secondary)'
+        backgroundColor: 'var(--bg-primary)',
+        minHeight: '48px'
       }}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 min-w-0">
         <h2 
-          className="text-lg font-semibold truncate"
+          className="text-base font-medium truncate"
           style={{ color: 'var(--text-primary)' }}
+          title={item.name || 'Untitled Request'}
         >
           {item.name || 'Untitled Request'}
         </h2>
-        
-        <span 
-          className="px-2 py-1 text-xs font-medium rounded"
-          style={{
-            backgroundColor: item.method === 'GET' ? '#10b981' : 
-                           item.method === 'POST' ? '#f59e0b' :
-                           item.method === 'PUT' ? '#3b82f6' :
-                           item.method === 'DELETE' ? '#ef4444' :
-                           '#6b7280',
-            color: 'white'
-          }}
-        >
-          {item.method || 'GET'}
-        </span>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {collection.environments && collection.environments.length > 0 && (
-          <div className="flex items-center gap-2">
-            <span 
-              className="text-sm font-medium"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              Environment:
-            </span>
-            <select
-              value={selectedEnvironment}
-              onChange={(e) => onEnvironmentChange(e.target.value)}
-              className="px-3 py-1.5 text-sm rounded border focus:outline-none focus:ring-2 focus:ring-blue-500"
-              style={{
-                backgroundColor: 'var(--bg-primary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-primary)'
-              }}
-            >
-              <option value="">No Environment</option>
-              {collection.environments.map((env) => (
-                <option key={env.name} value={env.name}>
-                  {env.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            value={selectedEnvironment}
+            onChange={(e) => onEnvironmentChange(e.target.value)}
+            className="px-2 py-1 text-xs rounded border focus:outline-none focus:ring-1 focus:ring-blue-500"
+            style={{
+              backgroundColor: 'var(--bg-secondary)',
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-primary)',
+              minWidth: '120px'
+            }}
+          >
+            <option value="">No Environment</option>
+            {collection.environments.map((env) => (
+              <option key={env.name} value={env.name}>
+                {env.name}
+              </option>
+            ))}
+          </select>
         )}
       </div>
     </div>

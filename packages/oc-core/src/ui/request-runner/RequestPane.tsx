@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { HttpRequest } from '../../types';
 import CodeEditor from '../CodeEditor';
+import Tabs from '../Tabs/Tabs';
 
 interface RequestPaneProps {
   item: HttpRequest;
@@ -8,16 +9,7 @@ interface RequestPaneProps {
 }
 
 const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
-  const [activeTab, setActiveTab] = useState<'params' | 'headers' | 'body' | 'auth' | 'scripts' | 'tests'>('params');
-
-  const tabs = [
-    { id: 'params', label: 'Params', count: item.params?.length || 0 },
-    { id: 'headers', label: 'Headers', count: item.headers?.length || 0 },
-    { id: 'body', label: 'Body' },
-    { id: 'auth', label: 'Auth' },
-    { id: 'scripts', label: 'Scripts' },
-    { id: 'tests', label: 'Tests' }
-  ] as const;
+  const [activeTab, setActiveTab] = useState('params');
 
   const handleParamChange = (index: number, field: 'name' | 'value' | 'enabled', value: any) => {
     const updatedParams = [...(item.params || [])];
@@ -51,11 +43,8 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     onItemChange({ ...item, headers: updatedHeaders });
   };
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'params':
-        return (
-          <div className="p-4">
+  const renderParams = () => (
+          <div className="py-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
@@ -129,10 +118,9 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
               )}
             </div>
           </div>
-        );
+  );
 
-      case 'headers':
-        return (
+  const renderHeaders = () => (
           <div className="p-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between mb-4">
@@ -204,10 +192,9 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
               )}
             </div>
           </div>
-        );
+  );
 
-      case 'body':
-        return (
+  const renderBody = () => (
           <div className="p-4">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -366,10 +353,9 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
               )}
             </div>
           </div>
-        );
+  );
 
-      case 'auth':
-        return (
+  const renderAuth = () => (
           <div className="p-4">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -572,10 +558,9 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
               )}
             </div>
           </div>
-        );
+  );
 
-      case 'scripts':
-        return (
+  const renderScripts = () => (
           <div className="p-4">
             <div className="space-y-6">
               <div>
@@ -617,10 +602,9 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
 
             </div>
           </div>
-        );
+  );
 
-      case 'tests':
-        return (
+  const renderTests = () => (
           <div className="p-4">
             <div className="space-y-4">
               <h4 className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
@@ -640,41 +624,24 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
               />
             </div>
           </div>
-        );
+  );
 
-      default:
-        return null;
-    }
-  };
+  const tabs = [
+    { id: 'params', label: 'Params', contentIndicator: item.params?.length || undefined, content: renderParams() },
+    { id: 'headers', label: 'Headers', contentIndicator: item.headers?.length || undefined, content: renderHeaders() },
+    { id: 'body', label: 'Body', content: renderBody() },
+    { id: 'auth', label: 'Auth', content: renderAuth() },
+    { id: 'scripts', label: 'Scripts', content: renderScripts() },
+    { id: 'tests', label: 'Tests', content: renderTests() }
+  ];
 
   return (
-    <div className="h-full flex flex-col" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="flex border-b" style={{ borderColor: 'var(--border-color)' }}>
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab.id ? 'border-blue-500' : 'border-transparent hover:border-gray-300'
-            }`}
-            style={{
-              color: activeTab === tab.id ? 'var(--primary-color)' : 'var(--text-secondary)',
-              backgroundColor: activeTab === tab.id ? 'var(--bg-secondary)' : 'transparent'
-            }}
-          >
-            {tab.label}
-            {'count' in tab && tab.count > 0 && (
-              <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--badge-bg)', color: 'var(--badge-text)' }}>
-                {tab.count}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex-1 overflow-auto">
-        {renderTabContent()}
-      </div>
+    <div className="h-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <Tabs 
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
     </div>
   );
 };

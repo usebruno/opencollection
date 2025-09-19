@@ -5,5 +5,4 @@ export { useTheme } from './useTheme';
 export { useResponsive } from './useResponsive';
 export { useItemFiltering } from './useItemFiltering';
 export { useMarkdownRenderer } from './useMarkdownRenderer';
-export { usePageNavigation } from './usePageNavigation';
 export { useRunnerMode } from './useRunnerMode';

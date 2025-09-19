@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { OpenCollectionCollection, OpenCollectionItem, HttpRequest, CustomPage, Folder } from '../types';
-import { getItemId, generateSafeId } from '../utils/itemUtils';
+import Method from '../components/Method/Method';
+import { getItemId, generateSafeId, sortItemsWithFoldersFirst } from '../utils/itemUtils';
 
 interface ApiEndpoint {
   id: string;
@@ -25,6 +26,10 @@ export interface SidebarProps {
   theme?: 'light' | 'dark' | 'auto';
   customPages?: CustomPage[];
   onlyShow?: string[];
+  isCompact?: boolean;
+  onSearchClick?: () => void;
+  isRunnerMode?: boolean;
+  onToggleRunnerMode?: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -35,7 +40,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   className = '',
   theme = 'light',
   customPages = [],
-  onlyShow = []
+  onlyShow = [],
+  isCompact = false,
+  onSearchClick,
+  isRunnerMode = false,
+  onToggleRunnerMode
 }) => {
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({});
   const [hoveredItemId, setHoveredItemId] = useState<string | null>(null);
@@ -57,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       items.forEach((item) => {
         if (item.type === 'folder') {
           const itemId = getItemId(item);
-          initExpandedFolders[itemId] = true;
+          initExpandedFolders[itemId] = false;
         }
       });
     }
@@ -121,7 +130,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       items = filterItemsByOnlyShow(items as OpenCollectionItem[]);
     }
     
-    return items;
+    // Sort items with folders first
+    return sortItemsWithFoldersFirst(items as OpenCollectionItem[]);
   }, [normalizedItems, onlyShow, collection, shouldShowItem]);
 
   const filteredEndpoints = useMemo(() => {
@@ -150,12 +160,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const renderFolderIcon = (isExpanded: boolean) => (
     <svg 
-      width="18" 
-      height="18" 
+      width="14" 
+      height="14" 
       viewBox="0 0 24 24" 
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
-      className="transform transition-transform duration-200"
+      className="transform transition-transform duration-300"
       style={{ transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
     >
       <path 
@@ -192,14 +202,13 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div key={itemId} className="relative">
         <div 
           className={`
-            sidebar-item flex items-center select-none text-sm cursor-pointer py-1.5 px-2 rounded-md
+            sidebar-item flex items-center select-none text-sm cursor-pointer
             ${isActive ? 'active' : ''}
             ${isHovered && !isActive ? 'hovered' : ''}
-            transition-colors duration-150
+            transition-all duration-200
           `}
           style={{ 
-            paddingLeft: `${level * 16 + 8}px`,
-            color: isActive ? 'var(--primary-color)' : 'var(--text-primary)'
+            paddingLeft: `${level * 16 + 8}px`
           }}
           onClick={() => isFolder ? toggleFolder(itemId) : handleItemSelect(safeItemId, itemPath)}
           onMouseEnter={() => setHoveredItemId(fullPathId)}
@@ -225,11 +234,10 @@ const Sidebar: React.FC<SidebarProps> = ({
               {renderFolderIcon(isExpanded)}
             </div>
           ) : (
-            <div 
-              className={`method-badge text-xs py-0.5 px-1.5 mr-2 rounded flex-shrink-0 ${item.type === "http" ? (item as HttpRequest).method?.toLowerCase() || 'get' : 'get'}`}
-            >
-              {item.type === "http" ? (item as HttpRequest).method || 'GET' : 'GET'}
-            </div>
+            <Method 
+              method={item.type === "http" ? (item as HttpRequest).method || 'GET' : 'GET'}
+              className="text-xs"
+            />
           )}
           
           
@@ -259,7 +267,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             />
             
             
-            {((item as Folder).items || []).map((child: OpenCollectionItem) => renderItem(child, level + 1, itemPath))}
+            {sortItemsWithFoldersFirst((item as Folder).items || []).map((child: OpenCollectionItem) => renderItem(child, level + 1, itemPath))}
           </div>
         )}
       </div>
@@ -267,14 +275,17 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className={`sidebar h-full flex flex-col ${className}`}>
-      {logo && (
-        <div className="logo p-4">
-          {logo}
+    <div className={`sidebar h-full flex flex-col ${isCompact ? 'compact' : ''} ${className}`} style={{ width: isCompact ? 'var(--sidebar-width-compact)' : 'var(--sidebar-width)' }}>
+      {/* Collection name at top */}
+      <div className="p-4 pt-0 border-b" style={{ borderColor: 'var(--border-color)' }}>
+        <div className="flex items-center">
+          <h1 className="font-semibold truncate flex-1" style={{ color: 'var(--text-primary)' }}>
+            {collection?.name || 'API Collection'}
+          </h1>
         </div>
-      )}
+      </div>
       
-      <div className="sidebar-items overflow-y-auto flex-grow mt-3">
+      <div className="sidebar-items overflow-y-auto flex-grow">
   
         {collection && (!onlyShow.length || shouldShowItem('overview')) && (
           <div className="relative">
@@ -295,7 +306,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               id="sidebar-item-overview"
               data-testid="overview"
             >
-              <div className="mr-2 flex-shrink-0">
+              <div className="mr-2 flex-shrink-0 opacity-70">
                 <svg
                   width="16"
                   height="16"
@@ -303,19 +314,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M8 10h8M8 14h4"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
+                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                  <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="8" y1="8" x2="12" y2="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               </div>
               <div className="truncate flex-1">Overview</div>
@@ -351,7 +352,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     id={`sidebar-item-${pageId}`}
                     data-testid={`custom-page-${pageId}`}
                   >
-                    <div className="mr-2 flex-shrink-0">
+                    <div className="mr-2 flex-shrink-0 opacity-70">
                       <svg
                         width="16"
                         height="16"
@@ -360,14 +361,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M14 2v6h6M16 13H8M16 17H8M10 9H8"
+                          d="M9 13h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V20a2 2 0 01-2 2z"
                           stroke="currentColor"
                           strokeWidth="2"
                           strokeLinecap="round"
@@ -409,15 +403,69 @@ const Sidebar: React.FC<SidebarProps> = ({
                   id={`sidebar-item-${fullPathId}`}
                   data-item-id={fullPathId}
                 >
-                  <span className={`method-badge flex-shrink-0 text-xs font-medium py-1 px-2 rounded mr-2 ${endpoint.method.toLowerCase()}`}>
-                    {endpoint.method}
-                  </span>
+                  <Method 
+                    method={endpoint.method}
+                    className="flex-shrink-0 text-xs"
+                  />
                   <span className="truncate">{endpoint.path}</span>
                 </button>
               );
             })}
           </>
         )}
+      </div>
+      
+      {/* Bottom buttons */}
+      <div className="p-3 border-t" style={{ borderColor: 'var(--border-color)' }}>
+        {/* Search button */}
+        {onSearchClick && (
+          <button
+            className="flex items-center w-full p-2 ps-3 text-sm rounded-lg mb-2 transition-colors"
+            style={{
+              backgroundColor: 'var(--input-bg)',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border-color)',
+              cursor: 'pointer'
+            }}
+            onClick={onSearchClick}
+          >
+            <svg className="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+            </svg>
+            <span className="flex-grow text-left">Search...</span>
+            <kbd className="px-1.5 py-0.5 text-xs font-semibold rounded" style={{ backgroundColor: 'var(--bg-secondary)', fontSize: '10px' }}>⌘K</kbd>
+          </button>
+        )}
+        
+        {/* Runner mode and Open in Bruno buttons */}
+        <div className="flex gap-2">
+          {onToggleRunnerMode && (
+            <button
+              onClick={onToggleRunnerMode}
+              className="flex-1 text-xs px-3 py-2 rounded-md font-medium transition-all"
+              style={{
+                backgroundColor: isRunnerMode ? 'var(--primary-color)' : 'var(--bg-secondary)',
+                color: isRunnerMode ? 'white' : 'var(--text-primary)',
+                border: `1px solid ${isRunnerMode ? 'var(--primary-color)' : 'var(--border-color)'}`
+              }}
+            >
+              Runner Mode
+            </button>
+          )}
+          <a
+            href="https://usebruno.com/play"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 text-xs px-3 py-2 rounded-md font-medium transition-all text-center"
+            style={{
+              backgroundColor: 'var(--primary-color)',
+              color: 'white',
+              textDecoration: 'none'
+            }}
+          >
+            Open in Bruno
+          </a>
+        </div>
       </div>
     </div>
   );

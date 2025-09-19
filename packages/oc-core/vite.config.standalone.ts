@@ -1,10 +1,15 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react()
+  ],
   define: {
     'process.env.NODE_ENV': '"production"'
   },
@@ -15,13 +20,21 @@ export default defineConfig({
       fileName: (format) => `playground.${format === 'es' ? 'esm' : format}.js`,
       formats: ['umd', 'es']
     },
+    cssCodeSplit: false,
     rollupOptions: {
       output: {
         // Bundle everything into a single file
         inlineDynamicImports: true,
         manualChunks: undefined,
         globals: {},
-        exports: 'named'
+        exports: 'named',
+        // Ensure CSS is extracted properly
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+            return 'core.css';
+          }
+          return assetInfo.name || 'asset';
+        }
       }
     },
     outDir: 'dist-standalone',

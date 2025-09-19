@@ -19,8 +19,8 @@
 <body>
     <div id="playground-container"></div>
 
-    <link rel="stylesheet" href="../../packages/oc-playground/dist-standalone/playground.css">
-    <script src="../../packages/oc-playground/dist-standalone/playground.umd.js"></script>
+    <link rel="stylesheet" href="../../packages/oc-core/dist-standalone/core.css">
+    <script src="../../packages/oc-core/dist-standalone/playground.umd.js"></script>
 
     <script>
         const sampleCollection = {
@@ -106,64 +106,102 @@
                     docs: "Deletes a user by ID"
                 },
                 {
-                    type: "http",
-                    name: "Get All Posts",
-                    method: "GET", 
-                    url: "https://jsonplaceholder.typicode.com/posts",
-                    docs: "Retrieves all blog posts"
-                },
-                {
-                    type: "http",
-                    name: "Get Post by ID",
-                    method: "GET",
-                    url: "https://jsonplaceholder.typicode.com/posts/1",
-                    docs: "Retrieves a specific post by its ID",
-                    params: [
+                    type: "folder",
+                    name: "Posts",
+                    items: [
                         {
-                            name: "id",
-                            value: "1",
-                            type: "path",
-                            enabled: true
+                            type: "http",
+                            name: "Get All Posts",
+                            method: "GET", 
+                            url: "https://jsonplaceholder.typicode.com/posts",
+                            docs: "Retrieves all blog posts"
+                        },
+                        {
+                            type: "http",
+                            name: "Get Post by ID",
+                            method: "GET",
+                            url: "https://jsonplaceholder.typicode.com/posts/1",
+                            docs: "Retrieves a specific post by its ID",
+                            params: [
+                                {
+                                    name: "id",
+                                    value: "1",
+                                    type: "path",
+                                    enabled: true
+                                }
+                            ]
+                        },
+                        {
+                            type: "http",
+                            name: "Create Post",
+                            method: "POST",
+                            url: "https://jsonplaceholder.typicode.com/posts",
+                            docs: "Creates a new blog post",
+                            headers: [
+                                {
+                                    name: "Content-Type",
+                                    value: "application/json"
+                                }
+                            ],
+                            body: {
+                                type: "json",
+                                data: JSON.stringify({
+                                    title: "My New Post",
+                                    body: "This is the content of my new post",
+                                    userId: 1
+                                }, null, 2)
+                            }
                         }
                     ]
-                },
+                }, ,
                 {
-                    type: "http",
-                    name: "Create Post",
-                    method: "POST",
-                    url: "https://jsonplaceholder.typicode.com/posts",
-                    docs: "Creates a new blog post",
-                    headers: [
+                    type: "folder",
+                    name: "People",
+                    items: [
                         {
-                            name: "Content-Type",
-                            value: "application/json"
+                            type: "http",
+                            name: "Get All Posts",
+                            method: "GET", 
+                            url: "https://jsonplaceholder.typicode.com/posts",
+                            docs: "Retrieves all blog posts"
+                        },
+                        {
+                            type: "http",
+                            name: "Get Post by ID",
+                            method: "GET",
+                            url: "https://jsonplaceholder.typicode.com/posts/1",
+                            docs: "Retrieves a specific post by its ID",
+                            params: [
+                                {
+                                    name: "id",
+                                    value: "1",
+                                    type: "path",
+                                    enabled: true
+                                }
+                            ]
+                        },
+                        {
+                            type: "http",
+                            name: "Create Post",
+                            method: "POST",
+                            url: "https://jsonplaceholder.typicode.com/posts",
+                            docs: "Creates a new blog post",
+                            headers: [
+                                {
+                                    name: "Content-Type",
+                                    value: "application/json"
+                                }
+                            ],
+                            body: {
+                                type: "json",
+                                data: JSON.stringify({
+                                    title: "My New Post",
+                                    body: "This is the content of my new post",
+                                    userId: 1
+                                }, null, 2)
+                            }
                         }
-                    ],
-                    body: {
-                        type: "json",
-                        data: JSON.stringify({
-                            title: "My New Post",
-                            body: "This is the content of my new post",
-                            userId: 1
-                        }, null, 2)
-                    }
-                },
-                {
-                    type: "script",
-                    script: `// Utility functions for API testing
-function generateRandomId() {
-    return Math.floor(Math.random() * 1000) + 1;
-}
-
-function formatDate(date) {
-    return new Date(date).toISOString();
-}
-
-// Export functions for use in tests
-module.exports = {
-    generateRandomId,
-    formatDate
-};`
+                    ]
                 }
             ],
             environments: [
@@ -237,7 +275,7 @@ module.exports = {
             target: container,
             opencollection: sampleCollection,
             theme: 'light',
-            logo: '🚀 OpenCollection Demo'
+            logo: '🚀 OpenCollection Demo12'
         });
     </script>
 </body>

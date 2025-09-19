@@ -13,7 +13,6 @@ export {
 export * from './types';
 export * from './hooks';
 export { 
-  PageNavigation, 
   SinglePageRenderer, 
   CodeEditor, 
   RequestRunner, 

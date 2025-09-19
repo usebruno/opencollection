@@ -2,7 +2,7 @@
 
 :root {
   /* Core theme colors */
-  --primary-color: #546de5;
+  --primary-color: #d97706;
   --secondary-color: #0ea5e9;
   
   /* Background colors */
@@ -24,8 +24,8 @@
   --code-text-dark: rgb(204, 204, 204);
   
   /* Sidebar colors */
-  --sidebar-bg-light: #F3F3F3;
-  --sidebar-bg-dark: #252526;
+  --sidebar-bg-light: #FAFAFA;
+  --sidebar-bg-dark: #1a1a1a;
   --sidebar-color-light: rgb(52, 52, 52);
   --sidebar-color-dark: #ccc;
   
@@ -80,8 +80,11 @@
   --prose-hr-color: rgba(0, 0, 0, 0.1);
   
   /* Layout dimensions */
-  --sidebar-width: 280px;
+  --sidebar-width: 260px;
+  --sidebar-width-compact: 200px;
   --header-height: 60px;
+  --item-padding-compact: 4px;
+  --item-height-compact: 28px;
   
   /* Z-index layers */
   --z-header: 10;
@@ -94,7 +97,7 @@
   
   /* Fonts */
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   
   /* Current theme variables (default to light) */
   --background-color: var(--background-light);
@@ -169,7 +172,7 @@
   width: 100%;
   height: 100vh !important;
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "San Francisco", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   color: var(--text-primary);
   background-color: var(--background-color);
   position: relative;
@@ -277,27 +280,26 @@
     width: var(--sidebar-width);
     min-width: var(--sidebar-width);
     max-width: var(--sidebar-width);
-    height: calc(100vh - var(--header-height)) !important;
     overflow-y: auto;
     background-color: var(--sidebar-bg-light);
     color: var(--sidebar-color-light);
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 16px 0;
   }
 
   .dark .playground-sidebar {
     background-color: var(--sidebar-bg-dark);
     color: var(--sidebar-color-dark);
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .playground-content {
     flex: 1;
     overflow-y: auto;
-    height: calc(100vh - var(--header-height)) !important;
   }
 
   .playground-console {
     overflow: hidden;
-    height: calc(100vh - var(--header-height)) !important;
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     background-color: var(--background-color);
@@ -349,113 +351,117 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  border-radius: 0.375rem;
+  border-radius: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+  font-family: var(--font-sans);
+  min-width: 42px;
 }
 
 .method-badge.get {
-  background-color: var(--method-get-bg);
-  color: white;
+  background-color: rgba(0, 112, 243, 0.09);
+  color: #0057b7;
+}
+
+.dark .method-badge.get {
+  background-color: rgba(0, 112, 243, 0.15);
+  color: #0077ff;
 }
 
 .method-badge.post {
-  background-color: var(--method-post-bg);
-  color: white;
+  background-color: rgba(0, 155, 0, 0.09);
+  color: #00824d;
+}
+
+.dark .method-badge.post {
+  background-color: rgba(0, 155, 0, 0.15);
+  color: #00a060;
 }
 
 .method-badge.put {
-  background-color: var(--method-put-bg);
-  color: white;
+  background-color: rgba(243, 112, 0, 0.09);
+  color: #b74600;
+}
+
+.dark .method-badge.put {
+  background-color: rgba(243, 112, 0, 0.15);
+  color: #ff6b00;
 }
 
 .method-badge.delete {
-  background-color: var(--method-delete-bg);
-  color: white;
+  background-color: rgba(243, 0, 0, 0.09);
+  color: #b70000;
+}
+
+.dark .method-badge.delete {
+  background-color: rgba(243, 0, 0, 0.15);
+  color: #ff0000;
 }
 
 .method-badge.patch {
-  background-color: var(--method-patch-bg);
-  color: white;
+  background-color: rgba(155, 0, 155, 0.09);
+  color: #6b0082;
+}
+
+.dark .method-badge.patch {
+  background-color: rgba(155, 0, 155, 0.15);
+  color: #9500b3;
 }
 
 .method-badge.options, 
 .method-badge.head {
-  background-color: var(--method-options-bg);
-  color: white;
+  background-color: rgba(100, 100, 100, 0.09);
+  color: #4a4a4a;
 }
 
-/* Dark mode method badges */
-.dark .method-badge.get {
-  background-color: var(--apple-blue-900);
-  color: var(--apple-blue-100);
-}
-
-.dark .method-badge.post {
-  background-color: var(--apple-green-900);
-  color: var(--apple-green-100);
-}
-
-.dark .method-badge.put {
-  background-color: var(--apple-orange-900);
-  color: var(--apple-orange-100);
-}
-
-.dark .method-badge.delete {
-  background-color: var(--apple-red-900);
-  color: var(--apple-red-100);
-}
-
-.dark .method-badge.patch {
-  background-color: var(--apple-purple-900);
-  color: var(--apple-purple-100);
-}
-
-.dark .method-badge.options, 
+.dark .method-badge.options,
 .dark .method-badge.head {
-  background-color: var(--apple-gray-900);
-  color: var(--apple-gray-100);
+  background-color: rgba(100, 100, 100, 0.15);
+  color: #888888;
 }
 
-/* Tab styling */
-.tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border-color);
-  position: relative;
+/* Sidebar scrollbar styling */
+.sidebar ::-webkit-scrollbar {
+  width: 6px;
 }
 
-.tab {
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  position: relative;
-  transition: color 0.2s ease;
+.sidebar ::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.tab:hover {
-  color: var(--text-primary);
+.sidebar ::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
-.tab.active {
-  color: var(--primary-color);
-  font-weight: 600;
+.dark .sidebar ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
-.tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--primary-color);
-  border-radius: 1px 1px 0 0;
+/* Sidebar Logo styling */
+.sidebar .logo {
+  padding: 0 10px 16px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 8px;
 }
+
+.dark .sidebar .logo {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+/* Overview and Custom Page icons */
+.sidebar-item svg {
+  transition: opacity 0.15s ease;
+}
+
+.sidebar-item:hover svg {
+  opacity: 1;
+}
+
 
 /* Code block styling */
 .code-block {
@@ -507,7 +513,6 @@
 .api-table th {
   text-align: left;
   padding: 0.75rem 1rem;
-  font-weight: 500;
   background-color: var(--table-header-bg);
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
@@ -837,55 +842,132 @@ tr.dark-row:nth-child(even) {
 /* Sidebar item styles */
 .sidebar-item {
   cursor: pointer;
-  transition: all 0.08s ease-out;
-  border-radius: 0.375rem;
-  margin-bottom: 2px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0;
+  margin-bottom: 1px;
   position: relative;
   overflow: hidden;
-  will-change: background-color, color;
+  padding: 5px 16px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 450;
+}
+
+/* Compact sidebar styles */
+.sidebar.compact {
+  min-width: var(--sidebar-width-compact);
+  max-width: var(--sidebar-width-compact);
+}
+
+.sidebar.compact .sidebar-item {
+  padding: 4px 8px;
+  font-size: 12px;
+  margin-bottom: 1px;
+}
+
+.sidebar.compact .method-badge {
+  padding: 2px 4px;
+  min-width: 36px;
+  font-size: 10px;
+}
+
+.sidebar.compact .logo {
+  padding: 8px;
+}
+
+.sidebar.compact .sidebar-items {
+  padding: 0 4px;
+}
+
+.sidebar.compact .sidebar-item svg {
+  width: 14px;
+  height: 14px;
 }
 
 .sidebar-item:hover, .sidebar-item.hovered {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.dark .sidebar-item {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .dark .sidebar-item:hover, .dark .sidebar-item.hovered {
-  background-color: rgba(255, 255, 255, 0.07);
+  background-color: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .sidebar-item.active {
-  background-color: rgba(84, 109, 229, 0.1);
-  color: var(--primary-color);
+  background-color: rgba(0, 0, 0, 0.08);
+  color: rgba(0, 0, 0, 0.9);
   font-weight: 500;
-  box-shadow: inset 3px 0 0 var(--primary-color);
 }
 
 .dark .sidebar-item.active {
-  background-color: rgba(84, 109, 229, 0.25);
-  color: #ffffff;
-  border-left: 3px solid var(--primary-color);
-}
-
-.sidebar-item.active:hover, .sidebar-item.active.hovered {
-  background-color: rgba(84, 109, 229, 0.3);
-}
-
-.sidebar-item.folder {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
   font-weight: 500;
 }
 
-.sidebar-item .method-badge {
-  font-size: 0.7rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 0.25rem;
+.sidebar-item.active:hover, .sidebar-item.active.hovered {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark .sidebar-item.active:hover, .dark .sidebar-item.active.hovered {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.sidebar-item.folder {
   font-weight: 600;
-  min-width: 45px;
+  color: rgba(0, 0, 0, 0.4);
+  background-color: transparent;
+  margin-top: 16px;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 4px 16px;
+}
+
+.dark .sidebar-item.folder {
+  color: rgba(255, 255, 255, 0.4);
+  background-color: transparent;
+}
+
+.sidebar-item.folder:hover {
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.dark .sidebar-item.folder:hover {
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar-item .method-badge {
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  min-width: 42px;
   text-align: center;
-  transition: all 0.08s ease-out;
+  letter-spacing: 0.03em;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  margin-right: 8px;
+  opacity: 0.85;
+}
+
+.dark .sidebar-item .method-badge {
+  opacity: 0.9;
 }
 
 .sidebar-items {
-  padding: 0 0.5rem;
+  padding: 0;
 }
 
 /* Fix for click events */

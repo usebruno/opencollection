@@ -82,7 +82,7 @@ const RequestRunner: React.FC<RequestRunnerProps> = ({ item, collection, proxyUr
 
   return (
     <div className="request-runner-container h-full flex flex-col" style={{ backgroundColor: 'var(--bg-primary)' }}>
-            <RequestHeader 
+      <RequestHeader 
         item={editableItem} 
         collection={collection}
         selectedEnvironment={selectedEnvironment}
@@ -96,19 +96,34 @@ const RequestRunner: React.FC<RequestRunnerProps> = ({ item, collection, proxyUr
         onItemChange={setEditableItem}
       />
       
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden pt-4">
         <div 
           className="flex-shrink-0 overflow-hidden"
-          style={{ width: `${requestPaneWidth}%` }}
+          style={{ 
+            width: `${requestPaneWidth}%`,
+            borderColor: 'var(--border-color)'
+          }}
         >
           <RequestPane item={editableItem} onItemChange={setEditableItem} />
         </div>
         
         <div 
-          className="w-1 cursor-col-resize flex-shrink-0 hover:bg-blue-500 transition-colors"
-          style={{ backgroundColor: 'var(--border-color)' }}
+          className="cursor-col-resize flex-shrink-0 relative hover:bg-opacity-10"
+          style={{ 
+            width: '1px',
+            backgroundColor: 'var(--border-color)',
+            margin: '0 16px',
+            transition: 'background-color 0.2s'
+          }}
           onMouseDown={handleMouseDown}
-        />
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--border-color)';
+          }}
+        >
+        </div>
         
         <div className="flex-1 overflow-hidden">
           <ResponsePane response={response} isLoading={isLoading} />

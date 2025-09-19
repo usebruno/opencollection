@@ -10,14 +10,6 @@ interface MobileLayoutProps {
   theme: 'light' | 'dark' | 'auto';
   currentPageId: string | null;
   currentPageItem: OpenCollectionItem | CustomPage | null;
-  currentPageIndex: number;
-  totalPages: number;
-  canGoNext: boolean;
-  canGoPrevious: boolean;
-  goToNext: () => void;
-  goToPrevious: () => void;
-  goToPage: (id: string) => void;
-  allPageItems: Array<{id: string; item: OpenCollectionItem | CustomPage; type: 'item' | 'custom' | 'overview'}>;
   onSelectItem: (id: string, path?: string) => void;
   filteredCustomPages: CustomPage[];
   onlyShow?: string[];
@@ -36,14 +28,6 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   theme,
   currentPageId,
   currentPageItem,
-  currentPageIndex,
-  totalPages,
-  canGoNext,
-  canGoPrevious,
-  goToNext,
-  goToPrevious,
-  goToPage,
-  allPageItems,
   onSelectItem,
   filteredCustomPages,
   onlyShow,
@@ -58,21 +42,15 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   if (hideSidebar) {
     return (
       <div className="h-[calc(100vh-60px)] w-full overflow-y-auto" ref={containerRef}>
-        <div className="p-4 h-full">
+        <div className="px-4 h-full">
           <SinglePageRenderer
             currentPageItem={currentPageItem}
             currentPageId={currentPageId}
-            pageType={allPageItems.find(p => p.id === currentPageId)?.type || 'item'}
+            pageType={currentPageId === 'overview' ? 'overview' : (currentPageItem && 'name' in currentPageItem && !('type' in currentPageItem)) ? 'custom' : 'item'}
             theme={theme}
             md={md}
             collection={collectionData}
             customPageContents={customPageContents}
-            currentPageIndex={currentPageIndex}
-            totalPages={totalPages}
-            canGoNext={canGoNext}
-            canGoPrevious={canGoPrevious}
-            goToNext={goToNext}
-            goToPrevious={goToPrevious}
           />
         </div>
       </div>
@@ -120,21 +98,15 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         className={`h-full overflow-y-auto ${mobileView === 'content' ? 'block' : 'hidden'}`}
         ref={containerRef}
       >
-        <div className="p-4 h-full">
+        <div className="px-4 h-full">
           <SinglePageRenderer
             currentPageItem={currentPageItem}
             currentPageId={currentPageId}
-            pageType={allPageItems.find(p => p.id === currentPageId)?.type || 'item'}
+            pageType={currentPageId === 'overview' ? 'overview' : (currentPageItem && 'name' in currentPageItem && !('type' in currentPageItem)) ? 'custom' : 'item'}
             theme={theme}
             md={md}
             collection={collectionData}
             customPageContents={customPageContents}
-            currentPageIndex={currentPageIndex}
-            totalPages={totalPages}
-            canGoNext={canGoNext}
-            canGoPrevious={canGoPrevious}
-            goToNext={goToNext}
-            goToPrevious={goToPrevious}
           />
         </div>
       </div>

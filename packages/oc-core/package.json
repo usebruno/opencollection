@@ -1,5 +1,5 @@
 {
-  "name": "@opencollection/playground",
+  "name": "@opencollection/core",
   "version": "1.0.0",
   "description": "Interactive API documentation component for OpenCollection - supports both React components and standalone JavaScript",
   "type": "module",
@@ -47,6 +47,8 @@
     "clean:standalone": "rimraf dist-standalone"
   },
   "dependencies": {
+    "@emotion/css": "^11.13.5",
+    "@emotion/styled": "^11.14.1",
     "@monaco-editor/react": "^4.7.0",
     "@prantlf/jsonlint": "^16.0.0",
     "@tailwindcss/vite": "^4.0.9",

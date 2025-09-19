@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   useCollectionData,
   useCustomPages,
@@ -7,7 +7,6 @@ import {
   useTheme,
   useItemFiltering,
   useSearchModal,
-  usePageNavigation,
   useRunnerMode
 } from '../hooks';
 import { OpenCollectionPlaygroundProps } from '../types';
@@ -39,25 +38,54 @@ const OpenCollectionPlayground: React.FC<OpenCollectionPlaygroundProps> = ({
     shouldShowOverview
   } = useItemFiltering(collectionData, validCustomPages, onlyShow);
 
-  const {
-    currentPageId,
-    currentPageItem,
-    currentPageIndex,
-    totalPages,
-    canGoNext,
-    canGoPrevious,
-    goToNext,
-    goToPrevious,
-    goToPage,
-    allPageItems
-  } = usePageNavigation(
-    collectionData,
-    filteredCustomPages,
-    filteredCollectionItems,
-    shouldShowOverview,
-    isMobile,
-    setMobileView
-  );
+  // Page selection state
+  const [currentPageId, setCurrentPageId] = useState<string | null>('overview');
+  const [currentPageItem, setCurrentPageItem] = useState<any>(null);
+
+  // Handle item selection
+  const handleSelectItem = (id: string, path?: string) => {
+    console.log('Selecting item:', id, 'path:', path);
+    setCurrentPageId(id);
+    
+    if (id === 'overview') {
+      setCurrentPageItem(null);
+      return;
+    }
+    
+    // Check if it's a custom page
+    const customPage = filteredCustomPages.find(page => page.name === id || page.name === id.replace(/-/g, ' '));
+    if (customPage) {
+      setCurrentPageItem(customPage);
+      return;
+    }
+    
+    // Find the item in the collection
+    const findItem = (items: any[]): any => {
+      for (const item of items) {
+        const itemId = item.id || item.uid || item.name || 'unnamed-item';
+        if (itemId === id || itemId.toLowerCase().replace(/[^a-z0-9\-_]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') === id) {
+          return item;
+        }
+        if (item.type === 'folder' && item.items) {
+          const found = findItem(item.items);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    
+    if (collectionData && 'items' in collectionData && collectionData.items) {
+      const item = findItem(collectionData.items);
+      setCurrentPageItem(item);
+    }
+  };
+
+  // Set initial page to overview when collection loads
+  useEffect(() => {
+    if (collectionData && currentPageId === null) {
+      setCurrentPageId('overview');
+    }
+  }, [collectionData, currentPageId]);
 
   const {
     isSearchOpen,
@@ -67,7 +95,7 @@ const OpenCollectionPlayground: React.FC<OpenCollectionPlaygroundProps> = ({
     searchResults,
     searchInputRef,
     handleSearchResultSelect: handleSearchResultSelectHook
-  } = useSearchModal(collectionData, validCustomPages, goToPage);
+  } = useSearchModal(collectionData, validCustomPages, handleSelectItem);
 
   const { isRunnerMode, toggleRunnerMode } = useRunnerMode();
 
@@ -89,15 +117,7 @@ const OpenCollectionPlayground: React.FC<OpenCollectionPlaygroundProps> = ({
     theme,
     currentPageId,
     currentPageItem,
-    currentPageIndex,
-    totalPages,
-    canGoNext,
-    canGoPrevious,
-    goToNext,
-    goToPrevious,
-    goToPage,
-    allPageItems,
-    onSelectItem: goToPage,
+    onSelectItem: handleSelectItem,
     filteredCustomPages,
     onlyShow,
     containerRef,

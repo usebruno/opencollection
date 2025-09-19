@@ -21,7 +21,7 @@ const ContentLayout = ({
   theme: 'light' | 'dark' | 'auto';
 }) => {
   return (
-    <div className={`${theme}`}>
+    <div className={`py-4 ${theme}`}>
       <div>
         <h1 className="font-bold text-2xl">{title}</h1>
         {badge && (

@@ -28,11 +28,34 @@ export class OpenCollectionPlaygroundRenderer {
     this.init();
   }
 
+  private injectInterFont() {
+    // Only inject if not already present
+    if (!document.querySelector('link[href*="fonts.googleapis.com/css2?family=Inter"]')) {
+      const links = [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
+        { 
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'
+        }
+      ];
+
+      links.forEach(linkProps => {
+        const link = document.createElement('link');
+        Object.entries(linkProps).forEach(([key, value]) => {
+          link.setAttribute(key, value);
+        });
+        document.head.appendChild(link);
+      });
+    }
+  }
+
   private init() {
     if (!this.options.target) {
       throw new Error('Target element is required');
     }
 
+    this.injectInterFont();
     this.root = createRoot(this.options.target);
     this.render();
   }

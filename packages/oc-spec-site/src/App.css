@@ -1,0 +1,16 @@
+/* Code blocks styling for Prism */
+pre[class*="language-"] {
+  @apply bg-gray-50 border border-gray-200 rounded-md p-4 overflow-x-auto text-sm;
+  margin: 0;
+}
+
+code[class*="language-"] {
+  @apply text-sm;
+  background: none;
+  padding: 0;
+}
+
+/* Inline code */
+code:not([class*="language-"]) {
+  @apply bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono;
+}

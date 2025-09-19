@@ -42,7 +42,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   if (hideSidebar) {
     return (
       <div className="h-[calc(100vh-60px)] w-full overflow-y-auto" ref={containerRef}>
-        <div className="px-4 h-full">
+        <div className="h-full">
           <SinglePageRenderer
             currentPageItem={currentPageItem}
             currentPageId={currentPageId}
@@ -98,7 +98,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         className={`h-full overflow-y-auto ${mobileView === 'content' ? 'block' : 'hidden'}`}
         ref={containerRef}
       >
-        <div className="px-4 h-full">
+        <div className="h-full">
           <SinglePageRenderer
             currentPageItem={currentPageItem}
             currentPageId={currentPageId}

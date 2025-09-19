@@ -76,7 +76,6 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           className="playground-sidebar h-full overflow-hidden flex"
           style={{
             width: 'var(--sidebar-width)',
-            borderRight: '1px solid var(--border-color)',
             transition: 'width 0.3s ease'
           }}
         >
@@ -99,7 +98,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
         className="playground-content h-full overflow-y-auto flex-1"
         ref={containerRef}
       >
-        <div className="px-4 h-full">
+        <div className="h-full">
           <SinglePageRenderer
             currentPageItem={currentPageItem}
             currentPageId={currentPageId}

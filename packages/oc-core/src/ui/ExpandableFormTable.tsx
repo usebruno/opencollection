@@ -82,7 +82,6 @@ const ExpandableFormTable: React.FC<ExpandableFormTableProps> = ({
               {items.map((item, index) => (
                 <tr key={index} className={item.enabled === false ? 'disabled-row' : ''} style={{
                   borderBottom: index < (items.length || 0) - 1 ? '1px solid var(--border-color)' : 'none',
-                  opacity: item.enabled === false ? 0.6 : 1
                 }}>
                   <td style={{
                     padding: '10px 16px',

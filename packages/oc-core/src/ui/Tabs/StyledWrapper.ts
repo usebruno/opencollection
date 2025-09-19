@@ -19,8 +19,8 @@ export const StyledWrapper = styled.div`
     .tab {
       border: none;
       border-bottom: solid 2px transparent;
-      margin-right: 1rem;
-      color: var(--text-secondary);
+      margin-right: 1.25rem;
+      color: var(--oc-tabs-color);
       cursor: pointer;
       font-size: 14px;
       transition: all 0.2s ease;
@@ -42,7 +42,7 @@ export const StyledWrapper = styled.div`
       }
 
       &.active {
-        color: var(--primary-color);
+        color: var(--oc-tabs-active-color);
         border-bottom-color: var(--primary-color);
       }
 

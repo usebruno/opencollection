@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { HttpRequest, OpenCollectionCollection } from '../../types';
 import { createRequestRunner } from '../../runner';
 import RequestHeader from './RequestHeader';
-import QueryBar from './QueryBar';
+import QueryBar from '../../components/Playground/QueryBar/QueryBar';
 import RequestPane from './RequestPane';
 import ResponsePane from './ResponsePane';
 
@@ -96,7 +96,7 @@ const RequestRunner: React.FC<RequestRunnerProps> = ({ item, collection, proxyUr
         onItemChange={setEditableItem}
       />
       
-      <div className="flex flex-1 overflow-hidden pt-4">
+      <div className="flex flex-1 overflow-hidden pt-5">
         <div 
           className="flex-shrink-0 overflow-hidden"
           style={{ 

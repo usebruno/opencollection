@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { HttpRequest } from '../../types';
+import { HttpRequest } from '../../../types';
+import { StyledWrapper } from './StyledWrapper';
 
 interface QueryBarProps {
   item: HttpRequest;
@@ -43,11 +44,9 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
   };
 
   return (
-    <div 
-      className="flex items-stretch border-b border-l"
+    <StyledWrapper 
+      className="flex items-stretch"
       style={{ 
-        borderColor: 'var(--border-color)',
-        backgroundColor: 'var(--bg-primary)',
         height: '36px'
       }}
     >
@@ -55,14 +54,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         <select
           value={method}
           onChange={(e) => handleMethodChange(e.target.value)}
-          className="h-full px-3 pr-7 text-xs font-semibold border-r focus:outline-none appearance-none cursor-pointer hover:bg-gray-50 transition-colors"
-          style={{
-            backgroundColor: 'transparent',
-            borderColor: 'var(--border-color)',
-            color: getMethodColor(method),
-            minWidth: '80px',
-            borderRadius: 0
-          }}
+          className="h-full px-3 text-xs font-semibold cursor-pointer"
         >
           {methods.map((m) => (
             <option key={m} value={m}>
@@ -70,11 +62,6 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
             </option>
           ))}
         </select>
-        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-tertiary)' }}>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
       </div>
 
       <input
@@ -82,12 +69,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         value={url}
         onChange={(e) => handleUrlChange(e.target.value)}
         placeholder="Enter request URL"
-        className="flex-1 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-inset focus:ring-blue-500"
-        style={{
-          backgroundColor: 'transparent',
-          color: 'var(--text-primary)',
-          borderRadius: 0
-        }}
+        className="flex-1 px-3 text-sm"
         onKeyPress={(e) => {
           if (e.key === 'Enter' && url.trim() && !isLoading) {
             onSendRequest();
@@ -98,18 +80,14 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
       <button
         onClick={onSendRequest}
         disabled={isLoading || !url.trim()}
-        className="px-4 text-xs font-medium text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all"
-        style={{
-          backgroundColor: 'var(--primary-color)',
-          borderRadius: 0
-        }}
+        className="send px-4 text-xs font-medium text-white disabled:cursor-not-allowed flex items-center gap-2 transition-all"
       >
         {isLoading && (
           <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
         )}
         {isLoading ? 'Sending' : 'Send'}
       </button>
-    </div>
+    </StyledWrapper>
   );
 };
 

@@ -1,0 +1,763 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.opencollection.com/json/draft-07/opencollection/v1.0.0",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the collection"
+    },
+    "description": {
+      "$ref": "#/$defs/Description"
+    },
+    "environments": {
+      "type": "array",
+      "description": "Array of environments",
+      "items": {
+        "$ref": "#/$defs/Environment"
+      }
+    },
+    "items": {
+      "type": "array",
+      "description": "Array of items in the collection",
+      "items": {
+        "$ref": "#/$defs/Item"
+      }
+    },
+    "base": {
+      "type": "object",
+      "description": "Base configuration for the collection",
+      "properties": {
+        "headers": {
+          "type": "array",
+          "description": "Array of request headers",
+          "items": {
+            "$ref": "#/$defs/RequestHeader"
+          }
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        },
+        "variables": {
+          "type": "array",
+          "description": "Array of variables",
+          "items": {
+            "$ref": "#/$defs/Variable"
+          }
+        },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
+        }
+      },
+      "additionalProperties": false
+    },
+    "docs": {
+      "type": "string",
+      "description": "The documentation"
+    }
+  },
+  "$defs": {
+    "Description": {
+      "description": "The description",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "description": "The content of the description"
+            },
+            "type": {
+              "type": "string",
+              "description": "The MIME type of the content"
+            }
+          },
+          "required": ["content", "type"],
+          "additionalProperties": false
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "RequestHeader": {
+      "type": "object",
+      "description": "A request header with name, value, description, and disabled state",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The header name"
+        },
+        "value": {
+          "type": "string",
+          "description": "The header value"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the header is disabled"
+        }
+      },
+      "required": ["name", "value"],
+      "additionalProperties": false
+    },
+    "RequestParam": {
+      "type": "object",
+      "description": "A request parameter with name, value, description, type, and enabled state",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The parameter name"
+        },
+        "value": {
+          "type": "string",
+          "description": "The parameter value"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["query", "path"],
+          "description": "The type of parameter"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the parameter is enabled"
+        }
+      },
+      "required": ["name", "value", "type"],
+      "additionalProperties": false
+    },
+    "RequestBody": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RawBody"
+        },
+        {
+          "$ref": "#/$defs/FormUrlEncodedBody"
+        },
+        {
+          "$ref": "#/$defs/MultipartFormBody"
+        },
+        {
+          "$ref": "#/$defs/FileBody"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "RawBody": {
+      "type": "object",
+      "description": "Raw request body with type and data",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["json", "text", "xml", "sparql"],
+          "description": "The type of raw body content"
+        },
+        "data": {
+          "type": "string",
+          "description": "The raw body data"
+        }
+      },
+      "required": ["type", "data"],
+      "additionalProperties": false
+    },
+    "FormUrlEncodedBody": {
+      "type": "array",
+      "description": "Form URL encoded body as array of key-value pairs",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The form field name"
+          },
+          "value": {
+            "type": "string",
+            "description": "The form field value"
+          },
+          "description": {
+            "$ref": "#/$defs/Description"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the form field is enabled"
+          }
+        },
+        "required": ["name", "value"],
+        "additionalProperties": false
+      }
+    },
+    "MultipartFormBody": {
+      "type": "array",
+      "description": "Multipart form body as array of form parts",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The form part name"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["text", "file"],
+            "description": "The type of form part"
+          },
+          "value": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "The form part value"
+          },
+          "description": {
+            "$ref": "#/$defs/Description"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the form part is enabled"
+          }
+        },
+        "required": ["name", "type", "value"],
+        "additionalProperties": false
+      }
+    },
+    "FileBody": {
+      "type": "array",
+      "description": "File body as array of file objects",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filePath": {
+            "type": "string",
+            "description": "Path to the file"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "MIME type of the file"
+          },
+          "selected": {
+            "type": "boolean",
+            "description": "Whether the file is selected"
+          }
+        },
+        "required": ["filePath", "contentType", "selected"],
+        "additionalProperties": false
+      }
+    },
+    "Assertion": {
+      "type": "object",
+      "description": "An assertion for response validation",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "The expression to evaluate"
+        },
+        "operator": {
+          "type": "string",
+          "description": "The comparison operator"
+        },
+        "value": {
+          "type": "string",
+          "description": "The expected value"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the assertion is enabled"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        }
+      },
+      "required": ["expression", "operator", "value"],
+      "additionalProperties": false
+    },
+    "Auth": {
+      "description": "Authentication",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AuthAwsV4"
+        },
+        {
+          "$ref": "#/$defs/AuthBasic"
+        },
+        {
+          "$ref": "#/$defs/AuthWsse"
+        },
+        {
+          "$ref": "#/$defs/AuthBearer"
+        },
+        {
+          "$ref": "#/$defs/AuthDigest"
+        },
+        {
+          "$ref": "#/$defs/AuthNTLM"
+        },
+        {
+          "$ref": "#/$defs/AuthApiKey"
+        }
+      ]
+    },
+    "AuthAwsV4": {
+      "type": "object",
+      "description": "AWS V4 authentication",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "awsv4"
+        },
+        "accessKeyId": {
+          "type": "string",
+          "description": "AWS access key ID"
+        },
+        "secretAccessKey": {
+          "type": "string",
+          "description": "AWS secret access key"
+        },
+        "sessionToken": {
+          "type": "string",
+          "description": "AWS session token"
+        },
+        "service": {
+          "type": "string",
+          "description": "AWS service name"
+        },
+        "region": {
+          "type": "string",
+          "description": "AWS region"
+        },
+        "profileName": {
+          "type": "string",
+          "description": "AWS profile name"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "AuthBasic": {
+      "type": "object",
+      "description": "Basic authentication",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "basic"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username for basic auth"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for basic auth"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "AuthWsse": {
+      "type": "object",
+      "description": "WSSE authentication",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "wsse"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username for WSSE auth"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for WSSE auth"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "AuthBearer": {
+      "type": "object",
+      "description": "Bearer token authentication",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "bearer"
+        },
+        "token": {
+          "type": "string",
+          "description": "Bearer token"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "AuthDigest": {
+      "type": "object",
+      "description": "Digest authentication",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "digest"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username for digest auth"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for digest auth"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "AuthNTLM": {
+      "type": "object",
+      "description": "NTLM authentication",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "ntlm"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username for NTLM auth"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for NTLM auth"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain for NTLM auth"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "AuthApiKey": {
+      "type": "object",
+      "description": "API Key authentication",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "apikey"
+        },
+        "key": {
+          "type": "string",
+          "description": "API key name"
+        },
+        "value": {
+          "type": "string",
+          "description": "API key value"
+        },
+        "placement": {
+          "type": "string",
+          "enum": ["header", "query"],
+          "description": "Where to place the API key"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "Item": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HttpRequest"
+        },
+        {
+          "$ref": "#/$defs/GraphQLRequest"
+        },
+        {
+          "$ref": "#/$defs/GrpcRequest"
+        },
+        {
+          "$ref": "#/$defs/Folder"
+        },
+        {
+          "$ref": "#/$defs/Script"
+        }
+      ]
+    },
+    "HttpRequest": {
+      "type": "object",
+      "description": "HTTP request configuration",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "http",
+          "description": "The type of request"
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL of the request"
+        },
+        "method": {
+          "type": "string",
+          "description": "HTTP method"
+        },
+        "params": {
+          "type": "array",
+          "description": "Array of request parameters",
+          "items": {
+            "$ref": "#/$defs/RequestParam"
+          }
+        },
+        "headers": {
+          "type": "array",
+          "description": "Array of request headers",
+          "items": {
+            "$ref": "#/$defs/RequestHeader"
+          }
+        },
+        "body": {
+          "$ref": "#/$defs/RequestBody"
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
+        },
+        "variables": {
+          "type": "array",
+          "description": "Array of variables",
+          "items": {
+            "$ref": "#/$defs/Variable"
+          }
+        },
+        "assertions": {
+          "type": "array",
+          "description": "Array of assertions for response validation",
+          "items": {
+            "$ref": "#/$defs/Assertion"
+          }
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation for this request"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "GraphQLRequest": {
+    },
+    "GrpcRequest": {
+    },
+    "Folder": {
+      "type": "object",
+      "description": "A folder for organizing collection items",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "folder"
+        },
+        "headers": {
+          "type": "array",
+          "description": "Array of request headers",
+          "items": {
+            "$ref": "#/$defs/RequestHeader"
+          }
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        },
+        "variables": {
+          "type": "array",
+          "description": "Array of variables",
+          "items": {
+            "$ref": "#/$defs/Variable"
+          }
+        },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation for this folder"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Script": {
+      "type": "object",
+      "description": "Javscript module or shared collection scripts",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "script"
+        },
+        "script": {
+          "type": "string",
+          "description": "The script"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Environment": {
+      "type": "object",
+      "description": "An environment configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the environment"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "variables": {
+          "type": "array",
+          "description": "Array of environment variables",
+          "items": {
+            "$ref": "#/$defs/Variable"
+          }
+        }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "Variable": {
+      "type": "object",
+      "description": "A variable with name, value, description, and state flags",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The variable name"
+        },
+        "value": {
+          "description": "The variable value",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/ValueSet"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the variable is disabled"
+        },
+        "transient": {
+          "type": "boolean",
+          "description": "Whether the variable value should be persisted or not"
+        },
+        "default": {
+          "description": "The default value when transient is true",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/Value"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "Value": {
+      "type": "object",
+      "description": "A value with data and type information",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "The string representation of the value"
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of the value",
+          "enum": ["string", "number", "boolean", "null", "object"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "ValueSet": {
+      "type": "object",
+      "description": "A value with data, type and variants",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "The string representation of the value"
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of the value",
+          "enum": ["string", "number", "boolean", "null", "object"]
+        },
+        "variants": {
+          "type": "array",
+          "description": "Array of variants for this value",
+          "items": {
+            "$ref": "#/$defs/Variant"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Variant": {
+      "type": "object",
+      "description": "A variant with data and description",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "The data for this variant"
+        },
+        "description": {
+          "type": "string",
+          "description": "The description for this variant"
+        }
+      },
+      "required": ["data"],
+      "additionalProperties": false
+    },
+    "Scripts": {
+      "type": "object",
+      "description": "Scripts for collection execution lifecycle",
+      "properties": {
+        "preRequest": {
+          "type": "string",
+          "description": "Script to execute before making requests"
+        },
+        "postResponse": {
+          "type": "string",
+          "description": "Script to execute after receiving responses"
+        },
+        "tests": {
+          "type": "string",
+          "description": "Test scripts to validate responses"
+        },
+        "hooks": {
+          "type": "string",
+          "description": "Scripts that can be injected into specific stages of the execution process."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

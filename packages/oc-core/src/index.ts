@@ -17,7 +17,6 @@ export {
   CodeEditor, 
   RequestRunner, 
   RequestHeader as RequestHeaderComponent,
-  QueryBar,
   RequestPane,
   ResponsePane 
 } from './ui';

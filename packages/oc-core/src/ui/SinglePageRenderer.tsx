@@ -105,7 +105,7 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
             theme={theme}
             md={md}
             parentPath=""
-            collection={collection || undefined}
+            // collection={collection || undefined}
           />
       </div>
     );

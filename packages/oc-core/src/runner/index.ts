@@ -38,7 +38,8 @@ export class RequestRunner {
     
     try {
       const envVars = this.getEnvironmentVariables(environment);
-      const allVars = { ...envVars, ...runtimeVariables };
+      const globalVars = this.scriptRunner.getGlobalVariables();
+      const allVars = { ...envVars, ...globalVars, ...runtimeVariables };
       
       const processedRequest = await this.preprocessRequest(item, collection, allVars);
       
@@ -102,8 +103,19 @@ export class RequestRunner {
     
     return processed;
   }
+
+  getGlobalVariables(): Record<string, any> {
+    return this.scriptRunner.getGlobalVariables();
+  }
+
+  clearGlobalVariables(): void {
+    this.scriptRunner.clearGlobalVariables();
+  }
 }
 
 export const createRequestRunner = (proxyUrl?: string) => new RequestRunner(proxyUrl);
 
-export const requestRunner = new RequestRunner(); 
+export const requestRunner = new RequestRunner();
+
+export const getGlobalVariables = () => requestRunner.getGlobalVariables();
+export const clearGlobalVariables = () => requestRunner.clearGlobalVariables(); 

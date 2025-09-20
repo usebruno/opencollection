@@ -20,7 +20,12 @@ export {
   RequestPane,
   ResponsePane 
 } from './ui';
-export { requestRunner, RequestRunner as RequestRunnerClass } from './runner';
+export { 
+  requestRunner, 
+  RequestRunner as RequestRunnerClass,
+  getGlobalVariables,
+  clearGlobalVariables 
+} from './runner';
 
 // Server-side exports
 export { renderPlayground } from './server';

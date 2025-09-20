@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { HttpRequest, OpenCollectionCollection } from '../../types';
-import { createRequestRunner } from '../../runner';
+import { requestRunner, createRequestRunner } from '../../runner';
 import RequestHeader from './RequestHeader';
 import QueryBar from '../../components/Playground/QueryBar/QueryBar';
 import RequestPane from './RequestPane';
@@ -13,6 +13,8 @@ interface RequestRunnerProps {
   toggleRunnerMode?: () => void;
 }
 
+const globalRunners = new Map<string, any>();
+
 const RequestRunner: React.FC<RequestRunnerProps> = ({ item, collection, proxyUrl, toggleRunnerMode }) => {
   const [editableItem, setEditableItem] = useState<HttpRequest>(item);
   const [selectedEnvironment, setSelectedEnvironment] = useState<string>('');
@@ -20,6 +22,14 @@ const RequestRunner: React.FC<RequestRunnerProps> = ({ item, collection, proxyUr
   const [isLoading, setIsLoading] = useState(false);
   const [requestPaneWidth, setRequestPaneWidth] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+
+  const runner = useMemo(() => {
+    const key = proxyUrl || 'default';
+    if (!globalRunners.has(key)) {
+      globalRunners.set(key, proxyUrl ? createRequestRunner(proxyUrl) : requestRunner);
+    }
+    return globalRunners.get(key);
+  }, [proxyUrl]);
 
   useEffect(() => {
     setEditableItem(item);
@@ -38,6 +48,7 @@ const RequestRunner: React.FC<RequestRunnerProps> = ({ item, collection, proxyUr
         environment,
         runtimeVariables: {}
       });
+
       setResponse(result);
     } catch (error) {
       setResponse({

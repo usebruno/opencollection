@@ -5,7 +5,8 @@
     "packages/oc-converters",
     "packages/oc-schema",
     "packages/oc-core",
-    "packages/oc-express"
+    "packages/oc-express",
+    "packages/oc-schema-explorer"
   ],
   "homepage": "https://uwww.opencollection.com"
 }

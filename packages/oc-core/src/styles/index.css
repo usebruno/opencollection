@@ -312,7 +312,7 @@ html, body {
     overflow-y: auto;
     background-color: var(--oc-sidebar-bg);
     color: var(--sidebar-color-light);
-    padding: 16px 0;
+    padding: 16px 0 0 0;
   }
 
   .dark .playground-sidebar {
@@ -1425,7 +1425,9 @@ tr.dark-row:nth-child(even) {
 
 /* Minimal Item Component Styles */
 .item-container {
-  @apply max-w-7xl mx-auto px-8 py-8;
+  @apply max-w-7xl mx-auto px-16 py-8;
+  margin-left: auto;
+  margin-right: 2rem;
 }
 
 .item-header-minimal {

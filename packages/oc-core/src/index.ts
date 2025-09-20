@@ -1,11 +1,11 @@
-import OpenCollectionPlayground from './core/OpenCollectionPlayground';
+import OpenCollection from './core/OpenCollection';
 import FileCollectionLoader from './core/FileCollectionLoader';
 import Sidebar from './ui/Sidebar';
 
 import './styles/index.css';
 
 export {
-  OpenCollectionPlayground,
+  OpenCollection,
   FileCollectionLoader,
   Sidebar,
 };

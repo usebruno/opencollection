@@ -6,7 +6,7 @@ import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-xml-doc';
 import 'prismjs/components/prism-python';
 import { OpenCollectionItem, HttpRequest, Script, Folder } from '../types';
-import { generateSectionId, getItemId, generateSafeId, sortItemsWithFoldersFirst } from '../utils/itemUtils';
+import { generateSectionId, getItemId, generateSafeId } from '../utils/itemUtils';
 import {
   MinimalDataTable,
   CompactCodeView,
@@ -30,6 +30,7 @@ const ItemComponent = memo(({
   theme,
   md,
   parentPath = '',
+  collection,
   toggleRunnerMode
 }: {
   item: OpenCollectionItem;
@@ -37,6 +38,7 @@ const ItemComponent = memo(({
   theme: 'light' | 'dark' | 'auto';
   md: any;
   parentPath?: string;
+  collection?: any;
   toggleRunnerMode?: () => void;
 }) => {
   const itemId = getItemId(item);
@@ -115,7 +117,7 @@ const ItemComponent = memo(({
             <div className="folder-items-section">
               <h3 className="section-title">Contents</h3>
               <div className="folder-items-grid">
-                {sortItemsWithFoldersFirst(folderItem.items).map((nestedItem, index) => {
+                {folderItem.items.map((nestedItem, index) => {
                   const nestedItemId = getItemId(nestedItem);
                   const safeId = generateSafeId(nestedItemId);
 
@@ -233,15 +235,7 @@ const ItemComponent = memo(({
                 {endpoint.method}
               </span>
               <span className="badge-url">{endpoint.url}</span>
-              <button 
-                className="badge-try"
-                onClick={() => {
-                  if (toggleRunnerMode && item.type === 'http') {
-                    toggleRunnerMode();
-                  }
-                }}
-                disabled={!toggleRunnerMode || item.type !== 'http'}
-              >
+              <button className="badge-try" onClick={toggleRunnerMode}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z"/>
                 </svg>

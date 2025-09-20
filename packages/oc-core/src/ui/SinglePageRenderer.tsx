@@ -1,14 +1,13 @@
 import React from 'react';
 import { OpenCollectionItem, OpenCollectionCollection, CustomPage, HttpRequest } from '../types';
 import ItemComponent from './ItemComponent';
-import Overview from './Overview';
 import CustomPageRenderer from './CustomPageRenderer';
 import { RequestRunner } from './request-runner';
 
 interface SinglePageRendererProps {
   currentPageItem: OpenCollectionItem | CustomPage | null;
   currentPageId: string | null;
-  pageType: 'item' | 'custom' | 'overview';
+  pageType: 'item' | 'custom';
   theme: 'light' | 'dark' | 'auto';
   md: any;
   collection: OpenCollectionCollection | null;
@@ -45,14 +44,6 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
     );
   }
 
-  // Render overview
-  if (pageType === 'overview' && collection) {
-    return (
-      <div className="min-h-full">
-        <Overview collection={collection} theme={theme} />
-      </div>
-    );
-  }
 
   // Render custom page
   if (pageType === 'custom' && currentPageItem) {
@@ -93,6 +84,7 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
             item={item as HttpRequest}
             collection={collection}
             proxyUrl={proxyUrl}
+            toggleRunnerMode={toggleRunnerMode}
           />
         </div>
       );
@@ -107,8 +99,8 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
             theme={theme}
             md={md}
             parentPath=""
+            collection={collection || undefined}
             toggleRunnerMode={toggleRunnerMode}
-            // collection={collection || undefined}
           />
       </div>
     );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import OpenCollectionPlayground from './OpenCollectionPlayground';
+import OpenCollection from './OpenCollection';
 
 const FileCollectionLoader: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -53,7 +53,7 @@ const FileCollectionLoader: React.FC = () => {
 
       <div className="flex-1">
         {selectedFile ? (
-          <OpenCollectionPlayground
+          <OpenCollection
             collection={selectedFile}
             theme={theme}
           />

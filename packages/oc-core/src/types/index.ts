@@ -135,7 +135,7 @@ export interface CustomPage {
   consoleView?: React.ReactNode;
 }
 
-export interface OpenCollectionPlaygroundProps {
+export interface OpenCollectionProps {
   collection: OpenCollectionCollection | string | File;
   theme?: 'light' | 'dark' | 'auto';
   logo?: React.ReactNode;

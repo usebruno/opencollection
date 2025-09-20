@@ -2,7 +2,6 @@ import React from 'react';
 import { OpenCollectionCollection, CustomPage, OpenCollectionItem } from '../types';
 import Sidebar from './Sidebar';
 import SinglePageRenderer from './SinglePageRenderer';
-import Overview from './Overview';
 
 interface MobileLayoutProps {
   collectionData: OpenCollectionCollection | null;
@@ -16,7 +15,6 @@ interface MobileLayoutProps {
   mobileView: 'sidebar' | 'content';
   setMobileView: (view: 'sidebar' | 'content') => void;
   containerRef: React.RefObject<HTMLDivElement | null>;
-  shouldShowOverview: boolean;
   filteredCollectionItems: any[];
   md: any;
   customPageContents: Record<string, string>;
@@ -34,7 +32,6 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   mobileView,
   setMobileView,
   containerRef,
-  shouldShowOverview,
   filteredCollectionItems,
   md,
   customPageContents
@@ -46,7 +43,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           <SinglePageRenderer
             currentPageItem={currentPageItem}
             currentPageId={currentPageId}
-            pageType={currentPageId === 'overview' ? 'overview' : (currentPageItem && 'name' in currentPageItem && !('type' in currentPageItem)) ? 'custom' : 'item'}
+            pageType={(currentPageItem && 'name' in currentPageItem && !('type' in currentPageItem)) ? 'custom' : 'item'}
             theme={theme}
             md={md}
             collection={collectionData}
@@ -102,7 +99,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           <SinglePageRenderer
             currentPageItem={currentPageItem}
             currentPageId={currentPageId}
-            pageType={currentPageId === 'overview' ? 'overview' : (currentPageItem && 'name' in currentPageItem && !('type' in currentPageItem)) ? 'custom' : 'item'}
+            pageType={(currentPageItem && 'name' in currentPageItem && !('type' in currentPageItem)) ? 'custom' : 'item'}
             theme={theme}
             md={md}
             collection={collectionData}

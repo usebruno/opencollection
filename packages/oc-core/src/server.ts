@@ -90,10 +90,10 @@ export function renderPlayground(options: ServerRenderOptions): string {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             try {
-                // Use window.OpenCollectionPlayground for standalone builds
-                const PlaygroundClass = window.OpenCollectionPlayground || OpenCollectionPlayground;
+                // Use window.OpenCollection for standalone builds
+                const PlaygroundClass = window.OpenCollection || OpenCollection;
                 if (!PlaygroundClass) {
-                    throw new Error('OpenCollectionPlayground is not available. Make sure the playground script is loaded correctly.');
+                    throw new Error('OpenCollection is not available. Make sure the playground script is loaded correctly.');
                 }
                 
                 const playground = new PlaygroundClass({

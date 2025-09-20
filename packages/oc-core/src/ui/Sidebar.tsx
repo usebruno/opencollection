@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { OpenCollectionCollection, OpenCollectionItem, HttpRequest, CustomPage, Folder } from '../types';
 import Method from '../components/Method/Method';
-import { getItemId, generateSafeId, sortItemsWithFoldersFirst } from '../utils/itemUtils';
+import { getItemId, generateSafeId } from '../utils/itemUtils';
+import OpenCollectionLogo from '../assets/opencollection-logo.svg';
 
 interface ApiEndpoint {
   id: string;
@@ -124,8 +125,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       items = filterItemsByOnlyShow(items as OpenCollectionItem[]);
     }
     
-    // Sort items with folders first
-    return sortItemsWithFoldersFirst(items as OpenCollectionItem[]);
+    // Return items in their original order
+    return items as OpenCollectionItem[];
   }, [normalizedItems, onlyShow, collection, shouldShowItem]);
 
   const filteredEndpoints = useMemo(() => {
@@ -238,13 +239,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="truncate flex-1">
             {itemName}
           </div>
-          
-          
-          {isFolder && (item as Folder).items && (item as Folder).items!.length > 0 && (
-            <div className="ml-2 text-xs opacity-70 px-1.5">
-              {(item as Folder).items!.length}
-            </div>
-          )}
         </div>
         
         
@@ -261,7 +255,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             />
             
             
-            {sortItemsWithFoldersFirst((item as Folder).items || []).map((child: OpenCollectionItem) => renderItem(child, level + 1, itemPath))}
+            {((item as Folder).items || []).map((child: OpenCollectionItem) => renderItem(child, level + 1, itemPath))}
           </div>
         )}
       </div>
@@ -372,6 +366,24 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
       
+      {/* OpenCollection Logo */}
+      <div className="p-2" style={{ borderColor: 'var(--border-color)' }}>
+        <a 
+          href="https://opencollection.dev" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block opacity-50 hover:opacity-70 transition-opacity"
+        >
+          <img 
+            src={OpenCollectionLogo} 
+            alt="OpenCollection" 
+            className="w-full max-w-[140px] mx-auto"
+            style={{ 
+              filter: theme === 'dark' ? 'invert(1) grayscale(100%)' : 'grayscale(100%)'
+            }}
+          />
+        </a>
+      </div>
     </div>
   );
 };

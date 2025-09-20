@@ -6,7 +6,7 @@ import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-xml-doc';
 import 'prismjs/components/prism-python';
 import { OpenCollectionItem, HttpRequest, Script, Folder } from '../types';
-import { generateSectionId, getItemId, generateSafeId, sortItemsWithFoldersFirst } from '../utils/itemUtils';
+import { generateSectionId, getItemId, generateSafeId } from '../utils/itemUtils';
 import {
   MinimalDataTable,
   CompactCodeView,
@@ -117,7 +117,7 @@ const ItemComponent = memo(({
             <div className="folder-items-section">
               <h3 className="section-title">Contents</h3>
               <div className="folder-items-grid">
-                {sortItemsWithFoldersFirst(folderItem.items).map((nestedItem, index) => {
+                {folderItem.items.map((nestedItem, index) => {
                   const nestedItemId = getItemId(nestedItem);
                   const safeId = generateSafeId(nestedItemId);
 

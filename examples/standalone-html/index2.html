@@ -37,88 +37,10 @@ environments:
         value: "http://localhost:3001/api"
 
 items:
-  # Cart folder
+  # Create Account folder
   - type: "folder"
-    name: "Cart"
-    docs: "Shopping cart endpoints"
-    items:
-      - type: "http"
-        name: "Get User Cart"
-        url: "{{baseUrl}}/cart"
-        method: "GET"
-        headers:
-          - name: "Authorization"
-            value: "Bearer {{accessToken}}"
-        docs: "Retrieve the current user's shopping cart"
-        
-      - type: "http"
-        name: "Add Item to Cart"
-        url: "{{baseUrl}}/cart/add/item/:itemId"
-        method: "POST"
-        headers:
-          - name: "Content-Type"
-            value: "application/json"
-          - name: "Authorization"
-            value: "Bearer {{accessToken}}"
-        params:
-          - name: "itemId"
-            value: "cd3ad475-0784-4a0d-9fe4-a9a17e5391d9"
-            type: "path"
-        body:
-          type: "json"
-          data: |
-            { 
-              "quantity": 2
-            }
-        docs: "Add a product to the user's shopping cart"
-        
-      - type: "http"
-        name: "Update Cart Item"
-        url: "{{baseUrl}}/cart/item/:itemId"
-        method: "PUT"
-        headers:
-          - name: "Content-Type"
-            value: "application/json"
-          - name: "Authorization"
-            value: "Bearer {{accessToken}}"
-        params:
-          - name: "itemId"
-            value: "cd3ad475-0784-4a0d-9fe4-a9a17e5391d9"
-            type: "path"
-        body:
-          type: "json"
-          data: |
-            {
-              "quantity": 5
-            }
-        docs: "Update the quantity of an item in the cart"
-        
-      - type: "http"
-        name: "Remove Item from Cart"
-        url: "{{baseUrl}}/cart/item/:itemId"
-        method: "DELETE"
-        headers:
-          - name: "Authorization"
-            value: "Bearer {{accessToken}}"
-        params:
-          - name: "itemId"
-            value: "cd3ad475-0784-4a0d-9fe4-a9a17e5391d9"
-            type: "path"
-        docs: "Remove a specific item from the cart"
-        
-      - type: "http"
-        name: "Clear Cart"
-        url: "{{baseUrl}}/cart"
-        method: "DELETE"
-        headers:
-          - name: "Authorization"
-            value: "Bearer {{accessToken}}"
-        docs: "Remove all items from the user's cart"
-
-  # Authentication folder
-  - type: "folder"
-    name: "Authentication"
-    docs: "User authentication endpoints"
+    name: "Create Account"
+    docs: "User registration endpoints"
     items:
       - type: "http"
         name: "Register User"
@@ -136,9 +58,14 @@ items:
               "password": "password123"
             }
         docs: "Register a new user account"
-        
+
+  # Login folder
+  - type: "folder"
+    name: "Login"
+    docs: "User authentication endpoints"
+    items:
       - type: "http"
-        name: "Login"
+        name: "User Login"
         url: "{{baseUrl}}/auth/login"
         method: "POST"
         body:
@@ -163,7 +90,7 @@ items:
 
   # Products folder
   - type: "folder"
-    name: "Products"
+    name: "Browse Products"
     docs: "Product-related endpoints. The server automatically seeds 5 sample products on startup if no products exist."
     items:
       - type: "http"
@@ -197,11 +124,53 @@ items:
             type: "path"
         docs: "Retrieve detailed information about a specific product"
 
-  # Orders folder
+  # Book Order folder
   - type: "folder"
-    name: "Orders"
-    docs: "Order management endpoints"
+    name: "Book Order"
+    docs: "Order creation and cart management endpoints"
     items:
+      - type: "http"
+        name: "Add Item"
+        url: "{{baseUrl}}/cart/add/item/:itemId"
+        method: "POST"
+        headers:
+          - name: "Content-Type"
+            value: "application/json"
+          - name: "Authorization"
+            value: "Bearer {{accessToken}}"
+        params:
+          - name: "itemId"
+            value: "cd3ad475-0784-4a0d-9fe4-a9a17e5391d9"
+            type: "path"
+        body:
+          type: "json"
+          data: |
+            { 
+              "quantity": 2
+            }
+        docs: "Add a product to the user's shopping cart"
+        
+      - type: "http"
+        name: "Update Item"
+        url: "{{baseUrl}}/cart/item/:itemId"
+        method: "PUT"
+        headers:
+          - name: "Content-Type"
+            value: "application/json"
+          - name: "Authorization"
+            value: "Bearer {{accessToken}}"
+        params:
+          - name: "itemId"
+            value: "cd3ad475-0784-4a0d-9fe4-a9a17e5391d9"
+            type: "path"
+        body:
+          type: "json"
+          data: |
+            {
+              "quantity": 5
+            }
+        docs: "Update the quantity of an item in the cart"
+        
       - type: "http"
         name: "Create Order"
         url: "{{baseUrl}}/orders"
@@ -218,7 +187,12 @@ items:
               "shippingAddress": "Mars"
             }
         docs: "Create a new order using the items in the user's cart"
-        
+
+  # Fetch Order folder
+  - type: "folder"
+    name: "Fetch Order"
+    docs: "Order retrieval endpoints"
+    items:
       - type: "http"
         name: "Get User Orders"
         url: "{{baseUrl}}/orders"

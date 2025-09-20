@@ -303,7 +303,7 @@ html, body {
     overflow-y: auto;
     background-color: var(--oc-sidebar-bg);
     color: var(--sidebar-color-light);
-    padding: 16px 0;
+    padding: 16px 0 0 0;
   }
 
   .dark .playground-sidebar {

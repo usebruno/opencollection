@@ -1,10 +1,11 @@
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import './styles/index.css';
-import OpenCollectionPlayground from './core/OpenCollectionPlayground';
+import OpenCollection from './core/OpenCollection';
 import { OpenCollectionCollection } from './types';
+import { parseCollectionContent } from './utils/yamlUtils';
 
-export interface OpenCollectionPlaygroundOptions {
+export interface OpenCollectionOptions {
   target: HTMLElement;
   opencollection: any;
   theme?: 'light' | 'dark' | 'auto';
@@ -19,11 +20,11 @@ export interface OpenCollectionPlaygroundOptions {
   onlyShow?: string[];
 }
 
-export class OpenCollectionPlaygroundRenderer {
+export class OpenCollectionRenderer {
   private root: Root | null = null;
-  private options: OpenCollectionPlaygroundOptions;
+  private options: OpenCollectionOptions;
 
-  constructor(options: OpenCollectionPlaygroundOptions) {
+  constructor(options: OpenCollectionOptions) {
     this.options = options;
     this.init();
   }
@@ -63,10 +64,10 @@ export class OpenCollectionPlaygroundRenderer {
   private convertCollection(opencollection: any): OpenCollectionCollection {
     if (typeof opencollection === 'string') {
       try {
-        return JSON.parse(opencollection) as OpenCollectionCollection;
+        return parseCollectionContent(opencollection) as OpenCollectionCollection;
       } catch (error) {
-        console.error('Failed to parse collection JSON:', error);
-        throw new Error('Invalid JSON format for OpenCollection');
+        console.error('Failed to parse collection:', error);
+        throw new Error(`Invalid collection format: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
 
@@ -88,7 +89,7 @@ export class OpenCollectionPlaygroundRenderer {
 
     const collection = this.convertCollection(this.options.opencollection);
     
-    const playgroundElement = React.createElement(OpenCollectionPlayground, {
+    const playgroundElement = React.createElement(OpenCollection, {
       collection,
       theme: this.options.theme || 'light',
       logo: this.createLogoElement(),
@@ -119,8 +120,8 @@ export class OpenCollectionPlaygroundRenderer {
   }
 }
 
-export default OpenCollectionPlaygroundRenderer;
+export default OpenCollectionRenderer;
 
 if (typeof window !== 'undefined') {
-  (window as any).OpenCollectionPlayground = OpenCollectionPlaygroundRenderer;
+  (window as any).OpenCollection = OpenCollectionRenderer;
 } 

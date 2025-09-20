@@ -1,4 +1,4 @@
-import OpenCollectionPlayground from './core/OpenCollectionPlayground';
+import OpenCollection from './core/OpenCollection';
 import './styles/App.css';
 import { test } from './test';
 
@@ -7,10 +7,9 @@ function App() {
 
   return (
     <div className="h-screen w-full">
-      <OpenCollectionPlayground
+      <OpenCollection
         collection={test}
         theme={theme}
-        // proxyUrl="http://localhost:3001"
       />
     </div>
   );

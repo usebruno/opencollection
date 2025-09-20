@@ -5,7 +5,6 @@ interface UseItemFilteringReturn {
   shouldShowItem: (itemId: string) => boolean;
   filteredCollectionItems: OpenCollectionItem[];
   filteredCustomPages: CustomPage[];
-  shouldShowOverview: boolean;
 }
 
 export const useItemFiltering = (
@@ -47,14 +46,9 @@ export const useItemFiltering = (
     return validCustomPages.filter(page => shouldShowItem(page.name));
   }, [validCustomPages, onlyShow, shouldShowItem]);
 
-  const shouldShowOverview = useMemo(() => {
-    return shouldShowItem('overview');
-  }, [shouldShowItem]);
-
   return {
     shouldShowItem,
     filteredCollectionItems,
-    filteredCustomPages,
-    shouldShowOverview
+    filteredCustomPages
   };
 }; 

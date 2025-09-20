@@ -10,9 +10,10 @@ interface RequestRunnerProps {
   item: HttpRequest;
   collection: OpenCollectionCollection;
   proxyUrl?: string;
+  toggleRunnerMode?: () => void;
 }
 
-const RequestRunner: React.FC<RequestRunnerProps> = ({ item, collection, proxyUrl }) => {
+const RequestRunner: React.FC<RequestRunnerProps> = ({ item, collection, proxyUrl, toggleRunnerMode }) => {
   const [editableItem, setEditableItem] = useState<HttpRequest>(item);
   const [selectedEnvironment, setSelectedEnvironment] = useState<string>('');
   const [response, setResponse] = useState<any>(null);
@@ -87,6 +88,7 @@ const RequestRunner: React.FC<RequestRunnerProps> = ({ item, collection, proxyUr
         collection={collection}
         selectedEnvironment={selectedEnvironment}
         onEnvironmentChange={setSelectedEnvironment}
+        toggleRunnerMode={toggleRunnerMode}
       />
       
       <QueryBar 

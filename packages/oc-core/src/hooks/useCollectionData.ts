@@ -63,28 +63,35 @@ export const useCollectionData = (collection: OpenCollectionCollection | string 
           
           setCollectionData(data as OpenCollectionCollection);
         } else if (typeof collection === 'string') {
-          // Handle URLs
-          const response = await fetch(collection);
-          if (!response.ok) {
-            throw new Error(`Failed to load API collection: ${response.statusText}`);
-          }
-          
-          // Check if the URL or content suggests YAML format
-          const contentType = response.headers.get('content-type') || '';
-          const isYamlUrl = isYamlFile(collection);
-          const isYamlContentType = contentType.includes('yaml') || contentType.includes('yml');
-          
-          let data;
-          if (isYamlUrl || isYamlContentType) {
-            // Handle YAML content
-            const yamlText = await response.text();
-            data = await loadOpenCollectionData(yamlText);
+          // Check if it's a URL or raw content
+          if (collection.startsWith('http://') || collection.startsWith('https://')) {
+            // Handle URLs
+            const response = await fetch(collection);
+            if (!response.ok) {
+              throw new Error(`Failed to load API collection: ${response.statusText}`);
+            }
+            
+            // Check if the URL or content suggests YAML format
+            const contentType = response.headers.get('content-type') || '';
+            const isYamlUrl = isYamlFile(collection);
+            const isYamlContentType = contentType.includes('yaml') || contentType.includes('yml');
+            
+            let data;
+            if (isYamlUrl || isYamlContentType) {
+              // Handle YAML content
+              const yamlText = await response.text();
+              data = await loadOpenCollectionData(yamlText);
+            } else {
+              // Default to JSON
+              data = await response.json();
+            }
+            
+            setCollectionData(data as OpenCollectionCollection);
           } else {
-            // Default to JSON
-            data = await response.json();
+            // Handle raw string content (JSON or YAML)
+            const data = await loadOpenCollectionData(collection);
+            setCollectionData(data as OpenCollectionCollection);
           }
-          
-          setCollectionData(data as OpenCollectionCollection);
         } else {
           // Handle collection objects
           setCollectionData(collection as OpenCollectionCollection);

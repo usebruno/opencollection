@@ -9,17 +9,16 @@ import {
   useSearchModal,
   useRunnerMode
 } from '../hooks';
-import { OpenCollectionPlaygroundProps } from '../types';
+import { OpenCollectionProps } from '../types';
 import MobileLayout from '../ui/MobileLayout';
 import DesktopLayout from '../layouts/DesktopLayout';
 
-const OpenCollectionPlayground: React.FC<OpenCollectionPlaygroundProps> = ({
+const OpenCollection: React.FC<OpenCollectionProps> = ({
   collection,
   theme = 'light',
   logo,
   customPages,
   hideSidebar = false,
-  hideHeader = false,
   onlyShow,
   proxyUrl,
 }) => {
@@ -34,12 +33,11 @@ const OpenCollectionPlayground: React.FC<OpenCollectionPlaygroundProps> = ({
 
   const {
     filteredCollectionItems,
-    filteredCustomPages,
-    shouldShowOverview
+    filteredCustomPages
   } = useItemFiltering(collectionData, validCustomPages, onlyShow);
 
   // Page selection state
-  const [currentPageId, setCurrentPageId] = useState<string | null>('overview');
+  const [currentPageId, setCurrentPageId] = useState<string | null>(null);
   const [currentPageItem, setCurrentPageItem] = useState<any>(null);
 
   // Handle item selection
@@ -47,10 +45,6 @@ const OpenCollectionPlayground: React.FC<OpenCollectionPlaygroundProps> = ({
     console.log('Selecting item:', id, 'path:', path);
     setCurrentPageId(id);
     
-    if (id === 'overview') {
-      setCurrentPageItem(null);
-      return;
-    }
     
     // Check if it's a custom page
     const customPage = filteredCustomPages.find(page => page.name === id || page.name === id.replace(/-/g, ' '));
@@ -80,10 +74,20 @@ const OpenCollectionPlayground: React.FC<OpenCollectionPlaygroundProps> = ({
     }
   };
 
-  // Set initial page to overview when collection loads
+  // Set initial page to first root-level request when collection loads
   useEffect(() => {
     if (collectionData && currentPageId === null) {
-      setCurrentPageId('overview');
+      // Find the first root-level request
+      const firstRequest = collectionData.items?.find(item => item.type === 'http');
+      if (firstRequest && firstRequest.name) {
+        handleSelectItem(firstRequest.name);
+      } else if (collectionData.items && collectionData.items.length > 0) {
+        // If no request found, select the first item
+        const firstItem = collectionData.items[0];
+        if (firstItem.name) {
+          handleSelectItem(firstItem.name);
+        }
+      }
     }
   }, [collectionData, currentPageId]);
 
@@ -121,7 +125,6 @@ const OpenCollectionPlayground: React.FC<OpenCollectionPlaygroundProps> = ({
     filteredCustomPages,
     onlyShow,
     containerRef,
-    shouldShowOverview,
     filteredCollectionItems,
     md,
     customPageContents
@@ -159,4 +162,4 @@ const OpenCollectionPlayground: React.FC<OpenCollectionPlaygroundProps> = ({
   );
 };
 
-export default OpenCollectionPlayground;
+export default OpenCollection;

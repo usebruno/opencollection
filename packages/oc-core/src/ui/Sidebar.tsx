@@ -27,9 +27,6 @@ export interface SidebarProps {
   customPages?: CustomPage[];
   onlyShow?: string[];
   isCompact?: boolean;
-  onSearchClick?: () => void;
-  isRunnerMode?: boolean;
-  onToggleRunnerMode?: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -41,10 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   theme = 'light',
   customPages = [],
   onlyShow = [],
-  isCompact = false,
-  onSearchClick,
-  isRunnerMode = false,
-  onToggleRunnerMode
+  isCompact = false
 }) => {
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({});
   const [hoveredItemId, setHoveredItemId] = useState<string | null>(null);
@@ -287,43 +281,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       
       <div className="sidebar-items overflow-y-auto flex-grow">
   
-        {collection && (!onlyShow.length || shouldShowItem('overview')) && (
-          <div className="relative">
-            <div 
-              className={`
-                sidebar-item flex items-center select-none text-sm cursor-pointer py-1.5 px-2 rounded-md
-                ${activeItemId === 'overview' ? 'active' : ''}
-                ${hoveredItemId === 'overview' && activeItemId !== 'overview' ? 'hovered' : ''}
-                transition-colors duration-150
-              `}
-              style={{ 
-                paddingLeft: '8px',
-                color: activeItemId === 'overview' ? 'var(--primary-color)' : 'var(--text-primary)'
-              }}
-              onClick={() => handleItemSelect('overview', '')}
-              onMouseEnter={() => setHoveredItemId('overview')}
-              onMouseLeave={() => setHoveredItemId(null)}
-              id="sidebar-item-overview"
-              data-testid="overview"
-            >
-              <div className="mr-2 flex-shrink-0 opacity-70">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                  <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  <line x1="8" y1="8" x2="12" y2="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <div className="truncate flex-1">Overview</div>
-            </div>
-          </div>
-        )}
-        
   
         {filteredCustomPages.length > 0 && (
           <div className="mt-1">
@@ -415,58 +372,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
       
-      {/* Bottom buttons */}
-      <div className="p-3 border-t" style={{ borderColor: 'var(--border-color)' }}>
-        {/* Search button */}
-        {onSearchClick && (
-          <button
-            className="flex items-center w-full p-2 ps-3 text-sm rounded-lg mb-2 transition-colors"
-            style={{
-              backgroundColor: 'var(--input-bg)',
-              color: 'var(--text-secondary)',
-              border: '1px solid var(--border-color)',
-              cursor: 'pointer'
-            }}
-            onClick={onSearchClick}
-          >
-            <svg className="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-            </svg>
-            <span className="flex-grow text-left">Search...</span>
-            <kbd className="px-1.5 py-0.5 text-xs font-semibold rounded" style={{ backgroundColor: 'var(--bg-secondary)', fontSize: '10px' }}>⌘K</kbd>
-          </button>
-        )}
-        
-        {/* Runner mode and Open in Bruno buttons */}
-        <div className="flex gap-2">
-          {onToggleRunnerMode && (
-            <button
-              onClick={onToggleRunnerMode}
-              className="flex-1 text-xs px-3 py-2 rounded-md font-medium transition-all"
-              style={{
-                backgroundColor: isRunnerMode ? 'var(--primary-color)' : 'var(--bg-secondary)',
-                color: isRunnerMode ? 'white' : 'var(--text-primary)',
-                border: `1px solid ${isRunnerMode ? 'var(--primary-color)' : 'var(--border-color)'}`
-              }}
-            >
-              Runner Mode
-            </button>
-          )}
-          <a
-            href="https://usebruno.com/play"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 text-xs px-3 py-2 rounded-md font-medium transition-all text-center"
-            style={{
-              backgroundColor: 'var(--primary-color)',
-              color: 'white',
-              textDecoration: 'none'
-            }}
-          >
-            Open in Bruno
-          </a>
-        </div>
-      </div>
     </div>
   );
 };

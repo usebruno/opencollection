@@ -22,7 +22,6 @@ interface DesktopLayoutProps {
   searchInputRef: React.RefObject<HTMLInputElement | null>;
   handleSearchResultSelect: (result: {id: string; path?: string; type: string}) => void;
   containerRef: React.RefObject<HTMLDivElement | null>;
-  shouldShowOverview: boolean;
   filteredCollectionItems: any[];
   md: any;
   customPageContents: Record<string, string>;
@@ -50,7 +49,6 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   searchInputRef,
   handleSearchResultSelect,
   containerRef,
-  shouldShowOverview,
   filteredCollectionItems,
   md,
   customPageContents,
@@ -87,9 +85,6 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             theme={theme}
             customPages={filteredCustomPages}
             onlyShow={onlyShow}
-            onSearchClick={() => setIsSearchOpen(true)}
-            isRunnerMode={isRunnerMode}
-            onToggleRunnerMode={toggleRunnerMode}
           />
         </div>
       )}
@@ -102,12 +97,13 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           <SinglePageRenderer
             currentPageItem={currentPageItem}
             currentPageId={currentPageId}
-            pageType={currentPageId === 'overview' ? 'overview' : (currentPageItem && 'name' in currentPageItem && !('type' in currentPageItem)) ? 'custom' : 'item'}
+            pageType={(currentPageItem && 'name' in currentPageItem && !('type' in currentPageItem)) ? 'custom' : 'item'}
             theme={theme}
             md={md}
             collection={collectionData}
             customPageContents={customPageContents}
             isRunnerMode={isRunnerMode}
+            toggleRunnerMode={toggleRunnerMode}
             proxyUrl={proxyUrl}
           />
         </div>

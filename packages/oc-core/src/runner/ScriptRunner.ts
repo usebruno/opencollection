@@ -29,10 +29,18 @@ interface ScriptContext {
   };
   res?: any;
   bru: {
+    // Variable methods
     setVar: (key: string, value: string) => void;
     getVar: (key: string) => string | undefined;
+    deleteVar: (key: string) => void;
+    hasVar: (key: string) => boolean;
+    deleteAllVars: () => void;
     setEnvVar: (key: string, value: string) => void;
     getEnvVar: (key: string) => string | undefined;
+    deleteEnvVar: (key: string) => void;
+    hasEnvVar: (key: string) => boolean;
+    cwd: () => string;
+    sleep: (ms: number) => Promise<void>;
   };
   test: (name: string, fn: () => void) => void;
   expect: (actual: any) => any;
@@ -108,21 +116,96 @@ export class ScriptRunner {
     const context: ScriptContext = {
       req: requestObj,
       bru: {
+        // Variable methods
         setVar: (key: string, value: string) => {
+          if (!key) {
+            throw new Error('Creating a variable without specifying a name is not allowed.');
+          }
+          
+          const variableNameRegex = /^[\w-.]*$/;
+          if (!variableNameRegex.test(key)) {
+            throw new Error(
+              `Variable name: "${key}" contains invalid characters! Names must only contain alpha-numeric characters, "-", "_", "."`
+            );
+          }
+          
           context.__variables[key] = value;
           variables[key] = value;
         },
         getVar: (key: string) => {
+          if (!key) return undefined;
+          
+          // Validate variable name
+          const variableNameRegex = /^[\w-.]*$/;
+          if (!variableNameRegex.test(key)) {
+            throw new Error(
+              `Variable name: "${key}" contains invalid characters! Names must only contain alpha-numeric characters, "-", "_", "."`
+            );
+          }
+          
           return context.__variables[key] || variables[key];
         },
+        deleteVar: (key: string) => {
+          if (!key) return;
+          delete context.__variables[key];
+          delete variables[key];
+        },
+                 hasVar: (key: string) => {
+           if (!key) return false;
+           return Object.hasOwnProperty.call(context.__variables, key) || Object.hasOwnProperty.call(variables, key);
+         },
+         deleteAllVars: () => {
+           // Clear all runtime variables
+           for (const key in context.__variables) {
+             if (context.__variables.hasOwnProperty(key)) {
+               delete context.__variables[key];
+             }
+           }
+           for (const key in variables) {
+             if (variables.hasOwnProperty(key)) {
+               delete variables[key];
+             }
+           }
+         },
+        
         setEnvVar: (key: string, value: string) => {
+          if (!key) {
+            throw new Error('Creating an env variable without specifying a name is not allowed.');
+          }
+          
+          // Validate variable name
+          const variableNameRegex = /^[\w-.]*$/;
+          if (!variableNameRegex.test(key)) {
+            throw new Error(
+              `Variable name: "${key}" contains invalid characters! Names must only contain alpha-numeric characters, "-", "_", "."`
+            );
+          }
+          
           context.__variables[key] = value;
           variables[key] = value;
         },
         getEnvVar: (key: string) => {
+          if (!key) return undefined;
           return context.__variables[key] || variables[key];
-        }
-      },
+        },
+        deleteEnvVar: (key: string) => {
+          if (!key) return;
+          delete context.__variables[key];
+          delete variables[key];
+        },
+                 hasEnvVar: (key: string) => {
+           if (!key) return false;
+           return Object.hasOwnProperty.call(context.__variables, key) || Object.hasOwnProperty.call(variables, key);
+         },
+         
+         // Utility methods
+         cwd: () => {
+           return process.cwd ? process.cwd() : '/';
+         },
+         sleep: (ms: number) => {
+           return new Promise((resolve) => setTimeout(resolve, ms));
+         }
+       },
       test: (name: string, fn: () => void) => {
         try {
           fn();

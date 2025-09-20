@@ -108,6 +108,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             collection={collectionData}
             customPageContents={customPageContents}
             isRunnerMode={isRunnerMode}
+            toggleRunnerMode={toggleRunnerMode}
             proxyUrl={proxyUrl}
           />
         </div>

@@ -29,13 +29,15 @@ const ItemComponent = memo(({
   registerSectionRef,
   theme,
   md,
-  parentPath = ''
+  parentPath = '',
+  toggleRunnerMode
 }: {
   item: OpenCollectionItem;
   registerSectionRef: (id: string, ref: HTMLDivElement | null) => void;
   theme: 'light' | 'dark' | 'auto';
   md: any;
   parentPath?: string;
+  toggleRunnerMode?: () => void;
 }) => {
   const itemId = getItemId(item);
   const sectionId = generateSectionId(item, parentPath);
@@ -231,7 +233,15 @@ const ItemComponent = memo(({
                 {endpoint.method}
               </span>
               <span className="badge-url">{endpoint.url}</span>
-              <button className="badge-try">
+              <button 
+                className="badge-try"
+                onClick={() => {
+                  if (toggleRunnerMode && item.type === 'http') {
+                    toggleRunnerMode();
+                  }
+                }}
+                disabled={!toggleRunnerMode || item.type !== 'http'}
+              >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z"/>
                 </svg>

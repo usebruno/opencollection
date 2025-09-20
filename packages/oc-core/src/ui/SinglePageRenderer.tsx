@@ -15,6 +15,7 @@ interface SinglePageRendererProps {
   customPageContents: Record<string, string>;
   // Runner mode props
   isRunnerMode?: boolean;
+  toggleRunnerMode?: () => void;
   proxyUrl?: string;
 }
 
@@ -27,6 +28,7 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
   collection,
   customPageContents,
   isRunnerMode,
+  toggleRunnerMode,
   proxyUrl
 }) => {
   if (!currentPageId) {
@@ -105,6 +107,7 @@ const SinglePageRenderer: React.FC<SinglePageRendererProps> = ({
             theme={theme}
             md={md}
             parentPath=""
+            toggleRunnerMode={toggleRunnerMode}
             // collection={collection || undefined}
           />
       </div>

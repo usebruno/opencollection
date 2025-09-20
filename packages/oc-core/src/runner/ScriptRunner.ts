@@ -52,12 +52,20 @@ interface ScriptContext {
 }
 
 export class ScriptRunner {
+  private globalRuntimeVariables: Record<string, any> = {};
+  private globalEnvironmentVariables: Record<string, any> = {};
+
   private createSandboxedContext(
     request: HttpRequest,
     response: RunRequestResponse | null,
     variables: Record<string, any>,
     collection: OpenCollectionCollection
   ): ScriptContext {
+    const mergedVariables = { 
+      ...this.globalRuntimeVariables, 
+      ...this.globalEnvironmentVariables,
+      ...variables 
+    };
     const requestObj = {
       url: request.url,
       method: request.method,
@@ -117,21 +125,22 @@ export class ScriptRunner {
       req: requestObj,
       bru: {
         // Variable methods
-        setVar: (key: string, value: string) => {
-          if (!key) {
-            throw new Error('Creating a variable without specifying a name is not allowed.');
-          }
-          
-          const variableNameRegex = /^[\w-.]*$/;
-          if (!variableNameRegex.test(key)) {
-            throw new Error(
-              `Variable name: "${key}" contains invalid characters! Names must only contain alpha-numeric characters, "-", "_", "."`
-            );
-          }
-          
-          context.__variables[key] = value;
-          variables[key] = value;
-        },
+                 setVar: (key: string, value: string) => {
+           if (!key) {
+             throw new Error('Creating a variable without specifying a name is not allowed.');
+           }
+           
+           const variableNameRegex = /^[\w-.]*$/;
+           if (!variableNameRegex.test(key)) {
+             throw new Error(
+               `Variable name: "${key}" contains invalid characters! Names must only contain alpha-numeric characters, "-", "_", "."`
+             );
+           }
+           
+           context.__variables[key] = value;
+           this.globalRuntimeVariables[key] = value;
+           variables[key] = value;
+         },
         getVar: (key: string) => {
           if (!key) return undefined;
           
@@ -143,22 +152,30 @@ export class ScriptRunner {
             );
           }
           
-          return context.__variables[key] || variables[key];
+          return context.__variables[key] ?? this.globalRuntimeVariables[key] ?? variables[key];
         },
-        deleteVar: (key: string) => {
-          if (!key) return;
-          delete context.__variables[key];
-          delete variables[key];
-        },
+                 deleteVar: (key: string) => {
+           if (!key) return;
+           delete context.__variables[key];
+           delete this.globalRuntimeVariables[key];
+           delete variables[key];
+         },
                  hasVar: (key: string) => {
            if (!key) return false;
-           return Object.hasOwnProperty.call(context.__variables, key) || Object.hasOwnProperty.call(variables, key);
+           return Object.hasOwnProperty.call(context.__variables, key) || 
+                  Object.hasOwnProperty.call(this.globalRuntimeVariables, key) || 
+                  Object.hasOwnProperty.call(variables, key);
          },
          deleteAllVars: () => {
            // Clear all runtime variables
            for (const key in context.__variables) {
              if (context.__variables.hasOwnProperty(key)) {
                delete context.__variables[key];
+             }
+           }
+           for (const key in this.globalRuntimeVariables) {
+             if (this.globalRuntimeVariables.hasOwnProperty(key)) {
+               delete this.globalRuntimeVariables[key];
              }
            }
            for (const key in variables) {
@@ -182,20 +199,24 @@ export class ScriptRunner {
           }
           
           context.__variables[key] = value;
+          this.globalEnvironmentVariables[key] = value;
           variables[key] = value;
         },
         getEnvVar: (key: string) => {
           if (!key) return undefined;
-          return context.__variables[key] || variables[key];
+          return context.__variables[key] ?? this.globalEnvironmentVariables[key] ?? variables[key];
         },
         deleteEnvVar: (key: string) => {
           if (!key) return;
           delete context.__variables[key];
+          delete this.globalEnvironmentVariables[key];
           delete variables[key];
         },
                  hasEnvVar: (key: string) => {
            if (!key) return false;
-           return Object.hasOwnProperty.call(context.__variables, key) || Object.hasOwnProperty.call(variables, key);
+           return Object.hasOwnProperty.call(context.__variables, key) || 
+                  Object.hasOwnProperty.call(this.globalEnvironmentVariables, key) || 
+                  Object.hasOwnProperty.call(variables, key);
          },
          
          // Utility methods
@@ -249,7 +270,7 @@ export class ScriptRunner {
       console: {
         log: (...args: any[]) => console.log('[Script]', ...args)
       },
-      __variables: { ...variables },
+      __variables: { ...mergedVariables },
       __testResults: []
     };
 
@@ -411,5 +432,19 @@ export class ScriptRunner {
     return path.split('.').reduce((current, key) => {
       return current && typeof current === 'object' ? current[key] : undefined;
     }, obj);
+  }
+
+  // Public method to get all global variables for use by RequestRunner
+  getGlobalVariables(): Record<string, any> {
+    return {
+      ...this.globalRuntimeVariables,
+      ...this.globalEnvironmentVariables
+    };
+  }
+
+  // Public method to clear all global variables (useful for testing or reset)
+  clearGlobalVariables(): void {
+    this.globalRuntimeVariables = {};
+    this.globalEnvironmentVariables = {};
   }
 } 

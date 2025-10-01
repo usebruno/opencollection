@@ -483,6 +483,9 @@
           "$ref": "#/$defs/GraphQLRequest"
         },
         {
+          "$ref": "#/$defs/WebSocketRequest"
+        },
+        {
           "$ref": "#/$defs/GrpcRequest"
         },
         {
@@ -561,6 +564,56 @@
     },
     "GraphQLRequest": {
     },
+    "WebSocketRequest": {
+      "type": "object",
+      "description": "Websocket request configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL of the request"
+        },
+        "protocols": {
+          "type":"array",
+          "items":{
+            "type":"string"
+          }
+        },
+        "protocolVersion": {
+          "type":"string"
+        },
+        "message":{
+          "type":"object",
+          "description":"Message to be sent",
+          "properties":{
+            "type":{
+              "type":"string"
+            },
+            "data": {
+              "type":"string"
+            }
+          }
+        },
+        "headers": {
+          "type": "array",
+          "description": "Array of request headers",
+          "items": {
+            "$ref": "#/$defs/RequestHeader"
+          }
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation for this request"
+        }
+      },
+      "required": ["url"]
+    },
     "GrpcRequest": {
     },
     "Folder": {
@@ -581,6 +634,9 @@
             },
             {
               "$ref": "#/$defs/GrpcRequest"
+            },
+            {
+              "$ref": "#/$defs/WebSocketRequest"
             },
             {
               "$ref": "#/$defs/Folder"

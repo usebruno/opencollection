@@ -483,6 +483,9 @@
           "$ref": "#/$defs/GraphQLRequest"
         },
         {
+          "$ref": "#/$defs/WebSocketRequest"
+        },
+        {
           "$ref": "#/$defs/GrpcRequest"
         },
         {
@@ -497,6 +500,10 @@
       "type": "object",
       "description": "HTTP request configuration",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
         "type": {
           "type": "string",
           "const": "http",
@@ -557,6 +564,58 @@
     },
     "GraphQLRequest": {
     },
+    "WebSocketRequest": {
+      "type": "object",
+      "description": "Websocket request configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL of the request"
+        },
+        "protocols": {
+          "type":"array",
+          "items":{
+            "type":"string"
+          }
+        },
+        "protocolVersion": {
+          "type":"string"
+        },
+        "message":{
+          "description":"Message to be sent",
+          "anyOf": [
+              {
+                "$ref":"#/$defs/WebsocketMessage"
+              }, 
+              {
+                "type": "array",
+                "items": {
+                  "$ref":"#/$defs/WebsocketMessage"
+                }
+              }
+          ]
+        },
+        "headers": {
+          "type": "array",
+          "description": "Array of request headers",
+          "items": {
+            "$ref": "#/$defs/RequestHeader"
+          }
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation for this request"
+        }
+      },
+      "required": ["url"]
+    },
     "GrpcRequest": {
     },
     "Folder": {
@@ -566,6 +625,28 @@
         "type": {
           "type": "string",
           "const": "folder"
+        },
+        "Item": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/HttpRequest"
+            },
+            {
+              "$ref": "#/$defs/GraphQLRequest"
+            },
+            {
+              "$ref": "#/$defs/GrpcRequest"
+            },
+            {
+              "$ref": "#/$defs/WebSocketRequest"
+            },
+            {
+              "$ref": "#/$defs/Folder"
+            },
+            {
+              "$ref": "#/$defs/Script"
+            }
+          ]
         },
         "headers": {
           "type": "array",
@@ -758,6 +839,18 @@
         }
       },
       "additionalProperties": false
+    },
+    "WebsocketMessage":{
+       "type": "object",
+        "properties":{
+        "type":{
+          "type":"string",
+          "enum":["text", "json", "xml", "binary"]
+        },
+        "data": {
+          "type":"string"
+        }
+      }
     }
   }
 }
